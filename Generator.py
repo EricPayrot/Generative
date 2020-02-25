@@ -20,21 +20,27 @@ class generator(Observer.Observer):
         self.param_default=[]
         self.widgets = []
         #self.observe('param_change',self.param_has_changed)
-        self.create_param_widgets()
+        self.create_param_widgets(nb_col=1)
 
     def create_param_widgets(self, nb_col=1):
         i=0
         col=0
+        row=0
         self.container = Frame(self.control_panel)
-        self.container.grid()
+        self.container.grid(sticky='w')
+        #self.container.columnconfigure(0,minsize=120)
+        self.container.columnconfigure(0, weight=1)
         for p in self.param:
             w=param_widget(parentUI=self.container,generator = self,param=self.param[i],label=self.param_label[i],value=self.param_default[i])
-            w.widget.grid(column=col)
+            w.widget.grid(row=row,column=col, sticky='ew')
             self.widgets.append(w)
+            #w.widget.columnconfigure(col,minsize=100/nb_col)
+            w.widget.columnconfigure(col, weight=1)
             i+=1
             col+=1
             if col >= nb_col:
                 col=0
+                row+=1
 
     def delete_param_widgets(self):
         self.container.destroy()
@@ -133,12 +139,12 @@ class grid(geometry):
 
         # prepare control panel widgets
         self.param.append('nb_col')
-        self.param_label.append('nombre colonnes')
+        self.param_label.append('nb col')
         self.param_default.append(self.nb_col)
         self.param.append('nb_lin')
-        self.param_label.append('nombre lignes')
+        self.param_label.append('nb lin')
         self.param_default.append(self.nb_lin)
-        self.create_param_widgets()
+        self.create_param_widgets(2)
 
     #calculatepoints
     def calculatepoints(self):
@@ -267,9 +273,9 @@ class resize(modulator):
         self.resize = 30
         # prepare control panel widgets
         self.param.append('resize')
-        self.param_label.append('clip size')
+        self.param_label.append('size')
         self.param_default.append(self.resize)
-        self.create_param_widgets()
+        self.create_param_widgets(1)
         self.clip_sizes = parent.geometry.get_clip_sizes()
 
     def update(self):
@@ -306,7 +312,7 @@ class rotate(modulator):
         self.param.append('rotation')
         self.param_label.append('rotate')
         self.param_default.append(self.rotation)
-        self.create_param_widgets()
+        self.create_param_widgets(1)
     
     def update(self):
          if self.is_int(self.rotation):
@@ -340,16 +346,28 @@ class hsv(modulator):
         self.create_param_widgets(3)
     
     def update(self):
-         if self.is_int(self.rotation):
-            self.rotation = int(self.rotation)
+        if self.is_int(self.H_offset):
+            self.H_offset = int(self.H_offset)
             for clip in self.parent.clips:
-                clip.rotation = self.rotation
-            #Event('generator_change', generator=self)
+                clip.H_offset = self.H_offset
+        if self.is_int(self.S_offset):
+            self.S_offset = int(self.S_offset)
+            for clip in self.parent.clips:
+                clip.S_offset = self.S_offset
+        if self.is_int(self.V_offset):
+            self.V_offset = int(self.V_offset)
+            for clip in self.parent.clips:
+                clip.V_offset = self.V_offset
 
     def randomize(self,generator):
         if generator == self:
+            self.H_offset = int(self.H_offset)
+            self.S_offset = int(self.S_offset)
+            self.V_offset = int(self.V_offset)
             for clip in self.parent.clips:
-                clip.rotation = random.randint(0,360)*self.rotation
+                clip.H_offset = int(random.uniform(-self.H_offset,self.H_offset))
+                clip.S_offset = int(random.uniform(-self.S_offset,self.S_offset))
+                clip.V_offset = int(random.uniform(-self.V_offset,self.V_offset))
             Event('generator_change', generator=self)     
 
 

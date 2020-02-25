@@ -28,23 +28,27 @@ class layerUI():
     def __init__(self, parent, parentUI):
         self.parentUI = parentUI
         self.control_panel = Frame(self.parentUI, height=500, width=250)
-        self.control_panel.grid_propagate(0)
+        #self.control_panel.grid_propagate(0)
         self.control_panel.grid(row=0,column=0)
+        self.control_panel.grid_columnconfigure(0, weight=1)
         self.layer_widget = layer_widget(parent.parent.layer_panel,parent)
         self.image_source_selector_panel = Frame(self.control_panel)
-        self.image_source_selector_panel.grid(row=0)
+        self.image_source_selector_panel.grid(row=0, in_=self.control_panel,sticky='ew')
+        self.image_source_selector_panel.grid_columnconfigure(0, weight=1)
         self.image_source_panel = Frame(self.control_panel)
-        self.image_source_panel.grid(row=1, in_=self.control_panel)
+        self.image_source_panel.grid(row=1, in_=self.control_panel, sticky='')
+        self.image_source_panel.grid_columnconfigure(0, weight=1)
         image_source_options = ["scratchpad", "file"]
         self.sel_img_srcUI = image_source_strategy_selectorUI(parentUI=self.image_source_selector_panel,options=image_source_options)
         self.mask_panel = Frame(self.control_panel)
-        self.mask_panel.grid(row=1, in_=self.control_panel)
+        self.mask_panel.grid(row=1, in_=self.control_panel, sticky='')
         self.src_msk_sel = source_mask_selector_widget(parentUI=self)
-        self.geometry_panel = Frame(self.control_panel)
-        self.geometry_panel.grid(row=2)
-        self.modulator_panel = Frame(self.control_panel)
-        self.modulator_panel.grid(row=3)
-        
+        self.geometry_panel = Frame(self.control_panel, borderwidth=5)
+        self.geometry_panel.grid(row=2, sticky='ew')
+        self.geometry_panel.grid_columnconfigure(0, weight=1)
+        self.modulator_panel = Frame(self.control_panel, borderwidth=5)
+        self.modulator_panel.grid(row=3, sticky='ew')
+        self.modulator_panel.grid_columnconfigure(0, weight=1)
 
 class new_layer_widget():
     def __init__(self,parentUI):
@@ -109,17 +113,17 @@ class param_widget():
         self.param = param
         self.name = label
         self.generator = generator
-        self.label = Label(self.widget,text=self.name)            
+        self.label = Label(self.widget,text=self.name, width=6)            
         self.value = StringVar()
         self.value.set(value)
-        self.entry = Entry(self.widget, textvariable=self.value)
+        self.entry = Entry(self.widget, textvariable=self.value, width=4)
         self.old_coords = None
         
         # layout widgets
         self.widget.grid()            
         #self.widget.columnconfigure(0,minsize=120)
         self.label.grid(row=0,column=0, sticky='e')
-        self.entry.grid(row=0,column=1)
+        self.entry.grid(row=0,column=1, sticky='e')
 
         # bindings
         self.entry.bind('<Return>',self.get_value)
@@ -171,8 +175,8 @@ class image_sourceUI():
         self.parent = parent
         self.parentUI = parentUI
         self.frame =Frame(self.parentUI)
-        self.frame.columnconfigure(1,weight=1)
-        self.frame.grid(row=1,pady=10)
+        #self.frame.columnconfigure(1,weight=1)
+        self.frame.grid(row=1,pady=10, sticky='w')
         self.source_image = self.parent.source_image
         self.originals = parent.originals
         self.scratchpad_image_index = 0

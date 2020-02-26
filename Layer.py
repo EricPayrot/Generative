@@ -145,7 +145,7 @@ class Layer(Observer.Observer):
         self.update(generator=self)
         #self.refresh_canvas()
 
-    def update(self, generator):
+    def update(self, generator, param = None):
         if generator == self:
             print('update all for layer', self)
             self.geometry.update()
@@ -153,6 +153,7 @@ class Layer(Observer.Observer):
             self.clip_mask.update()
             self.resize.update()
             self.rotate.update()
+            self.hsv.update(param)
             self.refresh_canvas()
 
         elif generator == self.geometry.instance:
@@ -162,6 +163,7 @@ class Layer(Observer.Observer):
             self.clip_mask.update()
             self.resize.update()
             self.rotate.update()
+            self.hsv.update(param)
             self.refresh_canvas()
         
         elif generator == self.image_source.instance:
@@ -172,6 +174,11 @@ class Layer(Observer.Observer):
         elif generator == self.masksource:
             print('---- update MASK source', generator, 'for layer',self)
             self.clip_mask.update()
+            self.refresh_canvas()
+        
+        elif generator == self.hsv:
+            print('Update HSV', generator, 'for layer',self)
+            self.hsv.update(param)
             self.refresh_canvas()
 
         elif generator.parent == self :

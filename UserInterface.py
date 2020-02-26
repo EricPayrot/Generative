@@ -113,7 +113,7 @@ class param_widget():
         self.param = param
         self.name = label
         self.generator = generator
-        self.label = Label(self.widget,text=self.name, width=6)            
+        self.label = Label(self.widget,text=self.name, width=5)            
         self.value = StringVar()
         self.value.set(value)
         self.entry = Entry(self.widget, textvariable=self.value, width=4)
@@ -136,10 +136,10 @@ class param_widget():
     # widget callbacks                
     def get_value(self,event):
         setattr(self.generator,self.param,int(self.value.get()))
-        Event('param_change',generator=self.generator)
+        Event('param_change',generator=self.generator, param=self.param)
 
     def param_label_clicked(self,event):
-        Event('param_label_clicked',generator=self.generator)
+        Event('param_label_clicked',generator=self.generator,param=self.param)
 
     def button1(self,event):
         self.v=int(self.value.get())
@@ -149,25 +149,26 @@ class param_widget():
         xm1, ym1 = self.old_coords
         xm = event.x
         ym = event.y
-        self.v = int(self.v + (ym1-ym)/20)
-        self.value.set(self.v)
-        old_coords = xm, ym
-        setattr(self.generator,self.param,self.v)
-        Event('param_change', generator=self.generator)
+        if abs(ym1-ym) >=20:
+            self.v = int(self.v + (ym1-ym)/20)
+            self.value.set(self.v)
+            old_coords = xm, ym
+            setattr(self.generator,self.param,self.v)
+            Event('param_change', generator=self.generator, param=self.param)
     
     def up(self,event):
         self.v=int(self.value.get())
         self.v +=1
         self.value.set(self.v)
         setattr(self.generator,self.param,self.v)
-        Event('param_change', generator=self.generator)
+        Event('param_change', generator=self.generator, param=self.param)
 
     def down(self,event):
         self.v=int(self.value.get())
         self.v -=1
         self.value.set(self.v)
         setattr(self.generator,self.param,self.v)
-        Event('param_change', generator=self.generator)
+        Event('param_change', generator=self.generator, param=self.param)
 
 
 class image_sourceUI():

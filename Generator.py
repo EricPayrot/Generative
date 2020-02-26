@@ -43,10 +43,9 @@ class generator(Observer.Observer):
                 row+=1
 
     def delete_param_widgets(self):
-        self.container.destroy()
         for widget in self.widgets:
             widget.widget.destroy()
-
+        self.container.destroy()
     
     def run(self):
         pass
@@ -102,9 +101,14 @@ class geometry(generator):
     def __init__(self, parent):
         super().__init__(parent) 
         self.coordinates = []
-        self.clip_sizes = []   
-        self.centerx = self.canvas.winfo_width()/2
-        self.centery = self.canvas.winfo_height()/2
+        self.clip_sizes = []
+        self.canvas.update()
+        self.canvas_w = self.canvas.winfo_width()
+        self.canvas_h = self.canvas.winfo_height()   
+        self.width = self.canvas.winfo_width()
+        self.height = self.canvas.winfo_height()
+        self.centerx = int(self.canvas.winfo_width()/2)
+        self.centery = int(self.canvas.winfo_height()/2)
         self.control_panel = self.parent.geometry_panel
 
     def update(self):
@@ -144,6 +148,25 @@ class grid(geometry):
         self.param.append('nb_lin')
         self.param_label.append('nb lin')
         self.param_default.append(self.nb_lin)
+        # self.create_param_widgets(2)
+
+        # second group of widgets organized 4 per row
+        # self.param.clear()
+        # self.param_label.clear()
+        # self.param_default.clear()
+
+        self.param.append('centerx')
+        self.param_label.append('x')
+        self.param_default.append(self.centerx)
+        self.param.append('centery')
+        self.param_label.append('y')
+        self.param_default.append(self.centery)
+        self.param.append('width')
+        self.param_label.append('w')
+        self.param_default.append(self.width)
+        self.param.append('height')
+        self.param_label.append('h')
+        self.param_default.append(self.height)
         self.create_param_widgets(2)
 
     #calculatepoints
@@ -156,9 +179,9 @@ class grid(geometry):
                 index = 0
                 for x in range(0,self.nb_col):
                     for y in range(0,self.nb_lin):
-                        cw,ch = (500,500)
-                        h=int((x+1)/(self.nb_col+1)*cw)
-                        v=int((y+1)/(self.nb_lin+1)*ch)
+                        cw,ch = (self.width,self.height)
+                        h=int((x+1)/(self.nb_col+1)*cw) + (self.centerx - self.canvas_w/2)
+                        v=int((y+1)/(self.nb_lin+1)*ch) + (self.centery - self.canvas_h/2)
                         coords = [h,v]
                         self.coordinates.append(coords)
     
@@ -176,9 +199,28 @@ class tree(geometry):
 
         # prepare control panel widgets
         self.param.append('nb_lin')
-        self.param_label.append('nombre lignes')
+        self.param_label.append('nb lin')
         self.param_default.append(self.nb_lin)
-        self.create_param_widgets()
+        # self.create_param_widgets()
+
+        # second group of widgets organized 4 per row
+        # self.param.clear()
+        # self.param_label.clear()
+        # self.param_default.clear()
+
+        self.param.append('centerx')
+        self.param_label.append('x')
+        self.param_default.append(self.centerx)
+        self.param.append('centery')
+        self.param_label.append('y')
+        self.param_default.append(self.centery)
+        self.param.append('width')
+        self.param_label.append('w')
+        self.param_default.append(self.width)
+        self.param.append('height')
+        self.param_label.append('h')
+        self.param_default.append(self.height)
+        self.create_param_widgets(2)
 
     #calculatepoints
     def calculatepoints(self):
@@ -192,9 +234,9 @@ class tree(geometry):
                 if y == 0:
                     nb_col = 1
                 for x in range(0,nb_col):
-                        cw,ch = (self.height,self.width)
-                        h=int((x+1)/(nb_col+1)*cw)
-                        v=int((y+1)/(self.nb_lin+1)*ch)
+                        cw,ch = (self.width,self.height)
+                        h=int((x+1)/(nb_col+1)*cw) + (self.centerx - self.canvas_w/2)
+                        v=int((y+1)/(self.nb_lin+1)*ch) + (self.centery - self.canvas_h/2)
                         coords = [h,v]
                         self.coordinates.append(coords)
                         cellx1 = int((x)/(nb_col+1)*cw)
@@ -243,7 +285,7 @@ class clip_source_image(modulator):
                 self.parent.clips[c].source_image=clip_source_image
         print('*****************update clips', self)
 
-    def randomize(self, generator):
+    def randomize(self, generator, param):
         if generator == self:
             print('randomize')
 
@@ -263,7 +305,7 @@ class clip_mask(modulator):
                 self.parent.clips[c].mask=clip_mask
         print('*****************update masks', self)
     
-    def randomize(self, generator):
+    def randomize(self, generator, param):
         if generator == self:
             print('randomize')
 
@@ -284,9 +326,8 @@ class resize(modulator):
             for clip in self.parent.clips:
                 clip.resize_x = self.resize
                 clip.resize_y = self.resize
-            #Event('generator_change', generator=self)
     
-    def randomize(self, generator):
+    def randomize(self, generator, param):
         if generator == self:
             for clip in self.parent.clips:
                 s = random.randint(10,self.resize)
@@ -319,9 +360,8 @@ class rotate(modulator):
             self.rotation = int(self.rotation)
             for clip in self.parent.clips:
                 clip.rotation = self.rotation
-            #Event('generator_change', generator=self)
 
-    def randomize(self,generator):
+    def randomize(self,generator, param):
         if generator == self:
             for clip in self.parent.clips:
                 clip.rotation = random.randint(0,360)*self.rotation
@@ -333,6 +373,10 @@ class hsv(modulator):
         self.H_offset = 0
         self.S_offset = 0
         self.V_offset = 0
+        self.H_offset_mode = 'value'
+        self.S_offset_mode = 'value'
+        self.V_offset_mode = 'value'
+
         # prepare control panel widgets
         self.param.append('H_offset')
         self.param_label.append('H')
@@ -345,29 +389,62 @@ class hsv(modulator):
         self.param_default.append(self.V_offset)
         self.create_param_widgets(3)
     
-    def update(self):
-        if self.is_int(self.H_offset):
+    def update(self, param = None):
+        if param == 'H_offset':
             self.H_offset = int(self.H_offset)
+            self.H_offset_mode = 'value'
             for clip in self.parent.clips:
                 clip.H_offset = self.H_offset
-        if self.is_int(self.S_offset):
+        elif param =='S_offset':
             self.S_offset = int(self.S_offset)
+            self.S_offset_mode = 'value'
             for clip in self.parent.clips:
                 clip.S_offset = self.S_offset
-        if self.is_int(self.V_offset):
+        elif param == 'V_offset':
             self.V_offset = int(self.V_offset)
+            self.V_offset_mode = 'value'
             for clip in self.parent.clips:
                 clip.V_offset = self.V_offset
+        else :
 
-    def randomize(self,generator):
+            if self.H_offset_mode == 'value':
+                self.H_offset = int(self.H_offset)
+                for clip in self.parent.clips:
+                    clip.H_offset = self.H_offset
+            elif self.H_offset_mode == 'random':
+                self.randomize(self,'H_offset')
+
+            if self.S_offset_mode == 'value':
+                self.S_offset = int(self.S_offset)
+                for clip in self.parent.clips:
+                    clip.S_offset = self.S_offset
+            elif self.S_offset_mode == 'random':
+                self.randomize(self,'S_offset')
+
+            if self.V_offset_mode == 'value':
+                self.V_offset = int(self.V_offset)
+                for clip in self.parent.clips:
+                    clip.V_offset = self.V_offset
+            elif self.V_offset_mode == 'random':
+                self.randomize(self,'V_offset')
+
+    def randomize(self,generator, param):
         if generator == self:
-            self.H_offset = int(self.H_offset)
-            self.S_offset = int(self.S_offset)
-            self.V_offset = int(self.V_offset)
-            for clip in self.parent.clips:
-                clip.H_offset = int(random.uniform(-self.H_offset,self.H_offset))
-                clip.S_offset = int(random.uniform(-self.S_offset,self.S_offset))
-                clip.V_offset = int(random.uniform(-self.V_offset,self.V_offset))
+            if param == 'H_offset':
+                self.H_offset = int(self.H_offset)
+                self.H_offset_mode = 'random'
+                for clip in self.parent.clips:
+                    clip.H_offset = int(random.uniform(-self.H_offset,self.H_offset))
+            elif param == 'S_offset':     
+                self.S_offset = int(self.S_offset)
+                self.S_offset_mode = 'random'
+                for clip in self.parent.clips:
+                    clip.S_offset = int(random.uniform(-self.S_offset,self.S_offset))
+            elif param == 'V_offset':    
+                self.V_offset = int(self.V_offset)
+                self.V_offset_mode = 'random'
+                for clip in self.parent.clips:
+                    clip.V_offset = int(random.uniform(-self.V_offset,self.V_offset))
             Event('generator_change', generator=self)     
 
 

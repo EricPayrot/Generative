@@ -8,8 +8,9 @@ class Observer():
 
 
 class Event():
-    def __init__(self, callbackname, generator=None, autofire = True):
+    def __init__(self, callbackname, generator=None, param=None, autofire = True):
         self.generator = generator
+        self.param = param
         self.callbackname = callbackname
 
         if autofire:
@@ -17,7 +18,9 @@ class Event():
     def fire(self):
         for observer in Observer._observers:
             if self.callbackname in observer._observables:
-                if self.generator:
+                if self.param:
+                    observer._observables[self.callbackname](self.generator, self.param)
+                elif self.generator:
                     observer._observables[self.callbackname](self.generator)
                 else :
                     observer._observables[self.callbackname]()

@@ -68,12 +68,20 @@ class layer_widget():
         self.layer = layer
         self.label = self.layer.layerIndex
         self.widget = Frame(parentUI, background='red')
-        self.layer_button = Button(self.widget,text=self.label, anchor='center',relief=FLAT, width=5, command=self.callback)  
+        self.layer_button = Button(self.widget,text=self.label, anchor='center',relief=FLAT, width=5, command=self.B1callback)  
         self.layer_button.grid()
         self.widget.grid()
+        self.layer_button.bind("<Control-Button-1>", self.CtlB1callback)
     
-    def callback(self):
+    def B1callback(self):
         Event('select_layer', generator=self.layer)
+    
+    def CtlB1callback(self, event):
+        Event('toggle_layer_visibility', generator=self.layer)
+        if self.layer.layer_visible == True:
+            self.layer_button.config(fg='black')
+        else :
+            self.layer_button.config(fg='red')
     
     def selected(self):
         self.layer_button.configure(background='SystemButtonFace')
@@ -178,7 +186,6 @@ class image_sourceUI():
         self.parent = parent
         self.parentUI = parentUI
         self.frame =Frame(self.parentUI)
-        #self.frame.columnconfigure(1,weight=1)
         self.frame.grid(row=1,pady=10, sticky='w')
         self.source_image = self.parent.source_image
         self.originals = parent.originals
@@ -467,6 +474,8 @@ class MaskUI(image_sourceUI):
         self.canvas()
         self.action_bar()
         self.source_image = self.parent.mask
+        self.image=Image.new("L",(200,200),0)
+        self.display_in_scratchpad()
 
     def drawing_palette(self):
         self.palette = Frame(self.frame)
@@ -548,8 +557,8 @@ class MaskUI(image_sourceUI):
         if self.scratchmode:
             source = Mask(original= self.image, mode = 'draw')
             self.source_image.append(source)
-        self.clear_scratchpad()
-        self.image=Image.new("L",(200,200),0)
+            self.clear_scratchpad()
+            self.image=Image.new("L",(200,200),0)
         self.scratchmode = True
         self.scratchpad_image_index = len(self.source_image)-1
         self.display_in_scratchpad()

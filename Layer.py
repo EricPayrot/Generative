@@ -26,6 +26,7 @@ class App(Observer.Observer):
         self.observe('select_layer',self.select_layer)
         # event binding
         root.bind('<Control-s>',self.save_output_image)
+        
         root.mainloop()
     
     def add_layer(self):
@@ -52,6 +53,10 @@ class App(Observer.Observer):
         # index1 = a_list. index("a")
         # index2 = a_list. index("c")
         # a_list[index1], a_list[index2] = a_list[index2], a_list[index1]
+    
+    def refresh_layer_stacking_order(self):
+        for layer in self.layers:
+                self.canvas.tag_raise(layer.layerID)
     
     def save_output_image(self, event):
         print('rendering output image for ',self,' and saving to file')
@@ -84,6 +89,7 @@ class Layer(Observer.Observer):
         self.canvas = self.parent.canvas
         self.geometry_strategy = 'grid'
         self.clips = []
+        self.layer_visible = True
 
         self.layerID = str(self).replace('.','').replace(' ','_')
         self.layerIndex = len(self.parent.layers)+1
@@ -111,15 +117,27 @@ class Layer(Observer.Observer):
         self.resize = resize(parent=self)
         self.rotate = rotate(parent=self)
         self.hsv = hsv(parent=self)
+        self.mask_invert = mask_invert(parent=self)
 
         #event binding
         self.observe('param_change',self.update)
         self.observe('generator_change',self.refresh_canvas)
         self.observe('image_source_strategy_change',self.change_image_source_strategy)
         self.observe('geometry_strategy_change',self.change_geometry_strategy)
+        self.observe('toggle_layer_visibility',self.toggle_layer_visibility)
+        
 
         self.update(self)
     
+    def toggle_layer_visibility(self, generator):
+        if generator == self:
+            if self.layer_visible == True:
+                self.layer_visible = False
+                self.canvas.itemconfigure(self.layerID, state='hidden')
+            else :
+                self.layer_visible = True
+                self.canvas.itemconfigure(self.layerID, state='normal')
+
     def change_image_source_strategy(self, generator):
         if generator == self.layerUI.sel_img_srcUI:
             self.image_source_strategy = generator.option.get()
@@ -143,7 +161,6 @@ class Layer(Observer.Observer):
         else:
             print('no change')
         self.update(generator=self)
-        #self.refresh_canvas()
 
     def update(self, generator, param = None):
         if generator == self:
@@ -154,6 +171,7 @@ class Layer(Observer.Observer):
             self.resize.update()
             self.rotate.update()
             self.hsv.update(param)
+            self.mask_invert.update()
             self.refresh_canvas()
 
         elif generator == self.geometry.instance:
@@ -165,6 +183,7 @@ class Layer(Observer.Observer):
                 self.resize.update()
                 self.rotate.update()
                 self.hsv.update(param)
+                self.mask_invert.update()
                 self.refresh_canvas()
             else:
                 self.geometry.update()
@@ -187,17 +206,21 @@ class Layer(Observer.Observer):
 
         elif generator.parent == self :
             print('------------update modulator', generator, 'for layer',self)
-            generator.update()
+            generator.update(param)
             self.refresh_canvas()
     
     def refresh_canvas(self, generator=all):
         print('refresh canvas for layer', self)
         for clip in self.clips:
             clip.update()
+        self.parent.refresh_layer_stacking_order()
     
     def refresh_position(self, generator=all):
-            for clip in self.clips:
-                clip.refresh_position()
+        for clip in self.clips:
+            clip.refresh_position()
+        self.parent.refresh_layer_stacking_order()
+
+    
 
 
 

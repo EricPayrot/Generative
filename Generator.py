@@ -278,7 +278,7 @@ class clip_source_image(modulator):
         self.param_default.append(self.source)
         #self.create_param_widgets()
 
-    def update(self):
+    def update(self, param=None):
         self.source_image = self.parent.image_source.get_source_image()
         for c in range(0,len(self.clips)):
             if len(self.source_image)>0:
@@ -324,7 +324,7 @@ class resize(modulator):
         self.create_param_widgets(1)
         self.clip_sizes = parent.geometry.get_clip_sizes()
 
-    def update(self):
+    def update(self, param=None):
         if self.is_int(self.resize):
             self.resize = int(self.resize)
             for clip in self.parent.clips:
@@ -359,7 +359,7 @@ class rotate(modulator):
         self.param_default.append(self.rotation)
         self.create_param_widgets(1)
     
-    def update(self):
+    def update(self, param=None):
          if self.is_int(self.rotation):
             self.rotation = int(self.rotation)
             for clip in self.parent.clips:
@@ -368,7 +368,10 @@ class rotate(modulator):
     def randomize(self,generator, param):
         if generator == self:
             for clip in self.parent.clips:
-                clip.rotation = random.randint(0,360)*self.rotation
+                if self.rotation == 90 or self.rotation == 180:
+                    clip.rotation = random.randint(0,4)*self.rotation
+                else :
+                    clip.rotation = random.randint(0,self.rotation)
             Event('generator_change', generator=self)
 
 class hsv(modulator):
@@ -410,7 +413,6 @@ class hsv(modulator):
             for clip in self.parent.clips:
                 clip.V_offset = self.V_offset
         else :
-
             if self.H_offset_mode == 'value':
                 self.H_offset = int(self.H_offset)
                 for clip in self.parent.clips:
@@ -451,5 +453,36 @@ class hsv(modulator):
                     clip.V_offset = int(random.uniform(-self.V_offset,self.V_offset))
             Event('generator_change', generator=self)     
 
+class mask_invert(modulator):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.mask_invert = False
+        self.mask_invert_mode = 'value'
+        # prepare control panel widgets
+        self.param.append('mask_invert')
+        self.param_label.append('msk inv')
+        self.param_default.append(self.mask_invert)
+        self.create_param_widgets(1)
+    
+    def update(self, param=None):
+        if param == 'mask_invert':
+            self.mask_invert_mode = 'value'
+
+        if self.mask_invert_mode == 'value':
+            if self.mask_invert == 1:
+                self.mask_invert = True
+            else:
+                self.mask_invert = False
+            for clip in self.parent.clips:
+                clip.invert_mask = self.mask_invert
+        elif self.mask_invert_mode == 'random':
+            self.randomize(self)
+
+    def randomize(self,generator, param=None):
+        if generator == self:
+            self.mask_invert_mode = 'random'
+            for clip in self.parent.clips:
+                clip.invert_mask = random.choice((False,True))
+            Event('generator_change', generator=self)
 
     

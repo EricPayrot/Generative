@@ -19,15 +19,21 @@ class ImageClip():
         self.H_offset = 0
         self.S_offset = 0
         self.V_offset = 0
+        self.invert_mask = False
 
     def process_and_place(self,canvas):
+        self.canvas.delete(self.TKitem)
         self.processed_image = Image.new('RGBA',self.source_image.size,(0,0,0,0))
-        self.processed_image.paste(self.source_image,box=(0,0),mask = self.mask.resize(self.source_image.size))
+        if self.invert_mask == True:
+            self.processed_mask = invert_mask(self.mask)
+        else:
+            self.processed_mask = self.mask
+        self.processed_image.paste(self.source_image,box=(0,0),mask = self.processed_mask.resize(self.source_image.size))
         self.processed_image = self.processed_image.rotate(-self.rotation,expand=True)
         self.processed_image = self.processed_image.resize((self.resize_x,self.resize_y),resample=0)
         self.processed_image = offset_hsl(self.processed_image, H_offset=self.H_offset, S_offset=self.S_offset, V_offset=self.V_offset)
         self.TKImage = ImageTk.PhotoImage(self.processed_image)
-        self.TKitem=self.canvas.create_image(self.position,image=self.TKImage,anchor='center',tag=self.generator.tag)
+        self.TKitem=self.canvas.create_image(self.position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
 
     def update(self):
         self.process_and_place(self.canvas)
@@ -119,4 +125,8 @@ def offset_hsl(image, H_offset=0, S_offset=0, V_offset=0):
     R, G, B = image.split()
     image = Image.merge('RGBA', (R,G,B,A))
     
+    return image
+
+def invert_mask(image):
+    image= image.point(lambda x : 255-x)
     return image

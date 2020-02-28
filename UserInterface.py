@@ -16,15 +16,21 @@ class appUI():
         scrollregion=(0, 0, self.parent.image_sizex, self.parent.image_sizey),xscrollcommand=self.xscrollbar.set,yscrollcommand=self.yscrollbar.set)
         self.xscrollbar.config(command=self.output_canvas.xview)
         self.yscrollbar.config(command=self.output_canvas.yview)
+        self.canvas_zoom = StringVar()
+        self.canvas_zoom.set(100)
+        self.zoom_entry = Entry(self.canvas_frame, textvariable=self.canvas_zoom, width=4)
 
         self.control_panel = Frame(parentUI,height=height,width=250,padx=3)
         self.layer_panel = Frame(parentUI,height=height,width=50,bg='white')
               
         # layout the main containers
         self.canvas_frame.grid(row=1,column=0)
-        self.output_canvas.grid(row=1,column=0, sticky ='nw')
-        self.xscrollbar.grid(row=2, column=0, sticky=E+W)
-        self.yscrollbar.grid(row=1, column=1, sticky=N+S)
+        self.output_canvas.grid(row=1,column=0, sticky ='nw', columnspan=2)
+        self.xscrollbar.grid(row=2, column=1, sticky=E+W)
+        self.yscrollbar.grid(row=1, column=2, sticky=N+S)
+        self.zoom_entry.grid(row=2, column=0, sticky=W)
+        self.canvas_frame.grid_columnconfigure(0, weight=0)
+        self.canvas_frame.grid_columnconfigure(1, weight=1)
         self.control_panel.grid(row=1, column=2,sticky ='ne')
         self.layer_panel.grid(row=1, column=3,sticky ='ne')
         self.layer_panel.grid_propagate(0)
@@ -33,7 +39,11 @@ class appUI():
         new_layer_widget(self.layer_panel)
 
         # Bindings
-    
+        self.zoom_entry.bind('<Return>',self.apply_zoom_factor)
+
+    def apply_zoom_factor(self, event=None):
+        self.output_canvas.scale(ALL,0,0,float(self.canvas_zoom.get())/100,float(self.canvas_zoom.get())/100)
+
     def reorder_layer_panels():
         print('***********************reorder layers')
 

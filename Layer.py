@@ -215,6 +215,7 @@ class Layer(Observer.Observer):
         for clip in self.clips:
             clip.update()
         self.parent.refresh_layer_stacking_order()
+        self.parent.appUI.apply_zoom_factor()
     
     def refresh_position(self, generator=all):
         for clip in self.clips:

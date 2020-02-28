@@ -6,16 +6,27 @@ import os, Observer
 from imageClip import SourceImage, Mask
 
 class appUI():
-    def __init__(self,parentUI, height, width):
+    def __init__(self,parent, parentUI, height, width):
         # define main containers
-        self.output_canvas = Canvas(parentUI,bg='white', width=width, height=height)
+        self.parent = parent
+        self.canvas_frame = Frame(parentUI)
+        self.xscrollbar = Scrollbar(self.canvas_frame, orient=HORIZONTAL)
+        self.yscrollbar = Scrollbar(self.canvas_frame)
+        self.output_canvas = Canvas(self.canvas_frame,bg='white', width=width, height=height, 
+        scrollregion=(0, 0, self.parent.image_sizex, self.parent.image_sizey),xscrollcommand=self.xscrollbar.set,yscrollcommand=self.yscrollbar.set)
+        self.xscrollbar.config(command=self.output_canvas.xview)
+        self.yscrollbar.config(command=self.output_canvas.yview)
+
         self.control_panel = Frame(parentUI,height=height,width=250,padx=3)
         self.layer_panel = Frame(parentUI,height=height,width=50,bg='white')
-                
+              
         # layout the main containers
+        self.canvas_frame.grid(row=1,column=0)
         self.output_canvas.grid(row=1,column=0, sticky ='nw')
-        self.control_panel.grid(row=1, column=1,sticky ='ne')
-        self.layer_panel.grid(row=1, column=2,sticky ='ne')
+        self.xscrollbar.grid(row=2, column=0, sticky=E+W)
+        self.yscrollbar.grid(row=1, column=1, sticky=N+S)
+        self.control_panel.grid(row=1, column=2,sticky ='ne')
+        self.layer_panel.grid(row=1, column=3,sticky ='ne')
         self.layer_panel.grid_propagate(0)
     
         # App widgets

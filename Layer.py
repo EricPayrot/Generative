@@ -13,9 +13,11 @@ class App(Observer.Observer):
         super().__init__()
         self.canvas_height = 500
         self.canvas_width = 500
+        self.image_sizex = 1000
+        self.image_sizey = 1000
         root=Tk()
         root.title('Maya the best')
-        self.appUI = appUI(root, self.canvas_height, self.canvas_width)
+        self.appUI = appUI(self, root, self.canvas_height, self.canvas_width)
         self.canvas = self.appUI.output_canvas
         self.control_panel = self.appUI.control_panel
         self.layer_panel = self.appUI.layer_panel
@@ -60,8 +62,7 @@ class App(Observer.Observer):
     
     def save_output_image(self, event):
         print('rendering output image for ',self,' and saving to file')
-        #self.output_image =Image.new("RGBA",(self.canvas['width'],self.canvas['height']),(255,255,255,255))
-        self.output_image =Image.new("RGBA",(500,500),(255,255,255,255))
+        self.output_image =Image.new("RGBA",(self.image_sizex,self.image_sizey),(255,255,255,255))
         self.savepath = r'output image'        
         
         for layer in self.layers:

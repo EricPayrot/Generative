@@ -21,8 +21,8 @@ class ImageClip():
         self.V_offset = 0
 
     def process_and_place(self,canvas):
-        self.processed_image = Image.new('RGBA',(200,200),(0,0,0,0))
-        self.processed_image.paste(self.source_image,box=(0,0),mask = self.mask.getchannel('R').resize(self.source_image.size))
+        self.processed_image = Image.new('RGBA',self.source_image.size,(0,0,0,0))
+        self.processed_image.paste(self.source_image,box=(0,0),mask = self.mask.resize(self.source_image.size))
         self.processed_image = self.processed_image.rotate(-self.rotation,expand=True)
         self.processed_image = self.processed_image.resize((self.resize_x,self.resize_y),resample=0)
         self.processed_image = offset_hsl(self.processed_image, H_offset=self.H_offset, S_offset=self.S_offset, V_offset=self.V_offset)
@@ -67,11 +67,7 @@ class Mask():
         self.width, self.height = self.original.size
         self.center_x = self.width/2
         self.center_y = self.height/2
-        if self.mode == 'file':
-            self.crop_original_image()
-            #self.process_file_image()
-        elif self.mode =='draw':
-            self.crop_original_image()
+        self.crop_original_image()
 
     def crop_original_image(self):          
         self.x1 = self.center_x-100/self.zoom_factor*100
@@ -86,9 +82,9 @@ class Mask():
     def process_file_image(self):
         M = Image.new('RGBA',self.image.size, 'white')
         M.paste(self.image,(0,0), self.image)
-        M= M.convert('L')
+        M = M.convert('L')
         N= M.point(lambda x : 255 if (x < 128) else 0)
-        self.image = Image.merge('RGBA',(N,N,N,Image.new('L',self.image.size,255)))
+        self.image = N
 
 
 def offset_hsl(image, H_offset=0, S_offset=0, V_offset=0):

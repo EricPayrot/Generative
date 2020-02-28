@@ -228,11 +228,14 @@ class image_sourceUI():
         self.scratch_canvas.old_coords = event.x,event.y
 
     def display_in_scratchpad(self):
-        self.clear_scratchpad()
-        self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image.resize((200,200),resample=0))
-        self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')
-        self.zoom.set(self.source_image[self.scratchpad_image_index].zoom_factor)
-
+            self.clear_scratchpad()
+            if self.scratchmode:
+                self.TKImage = ImageTk.PhotoImage(self.image) 
+            else:
+                self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image.resize((200,200),resample=0))
+                self.zoom.set(self.source_image[self.scratchpad_image_index].zoom_factor)
+            self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')
+            
     def delete_image(self,event):
         if len(self.source_image) > 1:
             del(self.source_image[self.scratchpad_image_index])
@@ -473,7 +476,7 @@ class MaskUI(image_sourceUI):
         self.zoom_entry.grid(row=0,column=1,sticky='ew')
         self.palette_colors = ['black','white']
         self.pen_color = StringVar()
-        self.pen_color.set(self.palette_colors[0])
+        self.pen_color.set(self.palette_colors[1])
 
         #bindings
         self.zoom_entry.bind('<Return>',self.zoom_get_value)
@@ -526,17 +529,18 @@ class MaskUI(image_sourceUI):
 
             self.brush_color = self.pen_color.get()
             if self.brush_color == 'white':
-                self.brush_color = (0,0,0,0)
+                self.brush_color = (255)
             elif self.brush_color == 'black':
-                self.brush_color = (0,0,0,255)
+                self.brush_color = (0)
             self.d.line(((x, y), (x1, y1)), self.brush_color, width=self.pen_size)
-            
-            if self.scratchmode:
-                self.TKImage = ImageTk.PhotoImage(self.image)
-            else :
-                self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image)
 
-            self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')
+            self.display_in_scratchpad()            
+            # if self.scratchmode:
+            #     self.TKImage = ImageTk.PhotoImage(self.image)
+            # else :
+            #     self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image)
+
+            # self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')
             self.scratch_canvas.old_coords = x, y
             #self.scratchmode = True
         
@@ -544,10 +548,11 @@ class MaskUI(image_sourceUI):
         if self.scratchmode:
             source = Mask(original= self.image, mode = 'draw')
             self.source_image.append(source)
-            self.scratchpad_image_index = len(self.source_image)
         self.clear_scratchpad()
-        self.image=Image.new("RGBA",(200,200),(255,255,255,0))
+        self.image=Image.new("L",(200,200),0)
         self.scratchmode = True
+        self.scratchpad_image_index = len(self.source_image)-1
+        self.display_in_scratchpad()
         Event('param_change', generator=self.parent)
         print('scratch pad index', self.scratchpad_image_index) 
     

@@ -136,7 +136,7 @@ class geometry(generator):
 
         for c in range(0,len(self.coordinates)):
             clip_source_image = Image.new("RGBA",(200,200),(127,127,127,20))
-            clip_mask =  Image.new("RGBA",(200,200),(255,255,255,255))
+            clip_mask =  Image.new("L",(200,200),255)
             self.parent.clips.append(ImageClip(source=clip_source_image,canvas=self.canvas,generator=self, mask=clip_mask))          
 
             self.parent.clips[c].position[0] = self.coordinates[c][0]
@@ -305,7 +305,7 @@ class clip_mask(modulator):
                 clip_mask = self.mask[random.randint(0,len(self.mask)-1)].image               
                 self.parent.clips[c].mask=clip_mask
             else :
-                clip_mask = Image.new("RGBA",(200,200),(255,255,255,255))               
+                clip_mask = Image.new("L",(200,200),255) #utile ?               
                 self.parent.clips[c].mask=clip_mask
         print('*****************update masks', self)
     

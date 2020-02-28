@@ -158,14 +158,18 @@ class Layer(Observer.Observer):
 
         elif generator == self.geometry.instance:
             print('update', generator, 'for layer', self)
-            self.geometry.update()
-            self.clip_source.update()
-            self.clip_mask.update()
-            self.resize.update()
-            self.rotate.update()
-            self.hsv.update(param)
-            self.refresh_canvas()
-        
+            if generator.nb_point_changed == True :
+                self.geometry.update()
+                self.clip_source.update()
+                self.clip_mask.update()
+                self.resize.update()
+                self.rotate.update()
+                self.hsv.update(param)
+                self.refresh_canvas()
+            else:
+                self.geometry.update()
+                self.refresh_position()
+
         elif generator == self.image_source.instance:
             print('---- update IMAGE source', generator, 'for layer',self)
             self.clip_source.update()
@@ -190,6 +194,10 @@ class Layer(Observer.Observer):
         print('refresh canvas for layer', self)
         for clip in self.clips:
             clip.update()
+    
+    def refresh_position(self, generator=all):
+            for clip in self.clips:
+                clip.refresh_position()
 
 
 

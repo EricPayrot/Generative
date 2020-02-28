@@ -102,6 +102,7 @@ class geometry(generator):
         super().__init__(parent) 
         self.coordinates = []
         self.clip_sizes = []
+        self.nb_point_changed = True
         self.canvas.update()
         self.canvas_w = self.canvas.winfo_width()
         self.canvas_h = self.canvas.winfo_height()   
@@ -112,11 +113,20 @@ class geometry(generator):
         self.control_panel = self.parent.geometry_panel
 
     def update(self):
+        self.old_nb_points = len(self.coordinates)
         self.calculatepoints()
         self.calculate_clip_sizes()
-        self.create_clips()
+        if len(self.coordinates) != self.old_nb_points:
+            self.nb_point_changed = True
+            self.create_clips()
+        else:
+            self.nb_point_changed = False
+            for c in range(0,len(self.coordinates)):
+                self.parent.clips[c].position[0] = self.coordinates[c][0]
+                self.parent.clips[c].position[1] = self.coordinates[c][1]
+                self.parent.clips[c].refresh_position()
 
-    
+
     def create_clips(self):
         self.source_image = self.parent.image_source.get_source_image()
         print ('create ',len(self.coordinates),' image clips using ', len(self.source_image), 'source images - ', 'for generator', self)
@@ -128,11 +138,12 @@ class geometry(generator):
             clip_source_image = Image.new("RGBA",(200,200),(127,127,127,20))
             clip_mask =  Image.new("RGBA",(200,200),(255,255,255,255))
             self.parent.clips.append(ImageClip(source=clip_source_image,canvas=self.canvas,generator=self, mask=clip_mask))          
-            x = self.coordinates[c][0]
-            y = self.coordinates[c][1]
-            self.parent.clips[c].position[0] = x
-            self.parent.clips[c].position[1] = y
-            self.parent.clips[c].place(self.canvas)
+
+            self.parent.clips[c].position[0] = self.coordinates[c][0]
+            self.parent.clips[c].position[1] = self.coordinates[c][1]
+            self.parent.clips[c].old_position[0] = self.coordinates[c][0]
+            self.parent.clips[c].old_position[1] = self.coordinates[c][1]
+            self.parent.clips[c].process_and_place(self.canvas)
                  
 class grid(geometry):
     def __init__(self, parent):
@@ -148,13 +159,6 @@ class grid(geometry):
         self.param.append('nb_lin')
         self.param_label.append('nb lin')
         self.param_default.append(self.nb_lin)
-        # self.create_param_widgets(2)
-
-        # second group of widgets organized 4 per row
-        # self.param.clear()
-        # self.param_label.clear()
-        # self.param_default.clear()
-
         self.param.append('centerx')
         self.param_label.append('x')
         self.param_default.append(self.centerx)
@@ -180,8 +184,8 @@ class grid(geometry):
                 for x in range(0,self.nb_col):
                     for y in range(0,self.nb_lin):
                         cw,ch = (self.width,self.height)
-                        h=int((x+1)/(self.nb_col+1)*cw) + (self.centerx - self.canvas_w/2)
-                        v=int((y+1)/(self.nb_lin+1)*ch) + (self.centery - self.canvas_h/2)
+                        h=int((x+1)/(self.nb_col+1)*cw) + (self.centerx - cw/2)
+                        v=int((y+1)/(self.nb_lin+1)*ch) + (self.centery - ch/2)
                         coords = [h,v]
                         self.coordinates.append(coords)
     

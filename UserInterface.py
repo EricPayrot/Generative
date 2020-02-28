@@ -20,6 +20,8 @@ class appUI():
     
         # App widgets
         new_layer_widget(self.layer_panel)
+
+        # Bindings
     
     def reorder_layer_panels():
         print('***********************reorder layers')
@@ -182,6 +184,8 @@ class image_sourceUI():
         self.originals = parent.originals
         self.scratchpad_image_index = 0
         self.scratchmode = True
+        self.zoom = StringVar()
+        self.zoom.set(100)
      
     def canvas(self):
         self.scratchpad_frame = Frame(self.frame)
@@ -226,7 +230,8 @@ class image_sourceUI():
     def display_in_scratchpad(self):
         self.clear_scratchpad()
         self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image.resize((200,200),resample=0))
-        self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')  
+        self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')
+        self.zoom.set(self.source_image[self.scratchpad_image_index].zoom_factor)
 
     def delete_image(self,event):
         if len(self.source_image) > 1:
@@ -250,10 +255,9 @@ class image_sourceUI():
 
         print('next image', self.scratchpad_image_index)
         self.scratchmode = False
-        self.clear_scratchpad()
-        self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image)
-        self.image = self.source_image[self.scratchpad_image_index]
-        self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')        
+        self.display_in_scratchpad()
+
+
 
     def previous_image(self,event):    
         if len(self.source_image) > 1:    
@@ -266,15 +270,63 @@ class image_sourceUI():
 
         print('previous image', self.scratchpad_image_index)
         self.scratchmode = False
-        self.TKImage = ImageTk.PhotoImage(self.source_image[self.scratchpad_image_index].image)
-        self.image = self.source_image[self.scratchpad_image_index]
-        self.clear_scratchpad()
-        self.scratch_canvas.create_image((100,100),image=self.TKImage,anchor='center')
+        self.display_in_scratchpad()
+
 
         print('index : ',self.scratchpad_image_index)
 
     def clear_scratchpad(self):
         self.scratch_canvas.delete('all')
+    
+    def move_crop_zone(self,event):
+        x, y = event.x, event.y
+        if self.scratch_canvas.old_coords:
+            x1, y1 = self.scratch_canvas.old_coords
+            self.center_x = self.source_image[self.scratchpad_image_index].center_x
+            self.center_y = self.source_image[self.scratchpad_image_index].center_y
+            self.source_image[self.scratchpad_image_index].center_x = self.center_x + (x1-x)/10
+            self.source_image[self.scratchpad_image_index].center_y = self.center_y + (y1-y)/10
+            self.source_image[self.scratchpad_image_index].crop_original_image()
+            self.display_in_scratchpad()
+    
+    # zoom methods to be renamed zoom_
+    def zoom_get_value(self,event):
+        self.source_image[self.scratchpad_image_index].zoom_factor = int(self.zoom.get())
+        self.source_image[self.scratchpad_image_index].crop_original_image()
+        self.display_in_scratchpad()
+        Event('param_change', generator=self.parent)
+
+    def zoom_button1(self,event):
+        self.v=int(self.zoom.get())
+        self.old_coords = event.x, event.y
+
+    def zoom_motion(self,event):
+        xm1, ym1 = self.old_coords
+        xm = event.x
+        ym = event.y
+        if abs(ym1-ym) >=20:
+            self.v = int(self.v + (ym1-ym)/20)
+            self.zoom.set(self.v)
+            self.zoom_get_value(event)
+            Event('param_change', generator=self.parent)
+        old_coords = xm, ym
+    def zoom_up(self,event):
+        self.v=int(self.zoom.get())
+        self.v +=1
+        self.zoom.set(self.v)
+        self.source_image[self.scratchpad_image_index].zoom_factor = int(self.zoom.get())
+        self.source_image[self.scratchpad_image_index].crop_original_image()
+        self.display_in_scratchpad()
+        Event('param_change', generator=self.parent)
+
+    def zoom_down(self,event):
+        self.v=int(self.zoom.get())
+        self.v -=1
+        self.zoom.set(self.v)
+        self.source_image[self.scratchpad_image_index].zoom_factor = int(self.zoom.get())
+        self.source_image[self.scratchpad_image_index].crop_original_image()
+        self.display_in_scratchpad()
+        Event('param_change', generator=self.parent)
 
 class scratchpad(image_sourceUI):  
 
@@ -364,8 +416,7 @@ class image_from_fileUI(image_sourceUI):
         self.load_button = Button(self.palette, text='Load', relief=FLAT, command=self.load_image)
         self.load_button.grid(row=0,column=0,sticky='ew')
 
-        self.zoom = StringVar()
-        self.zoom.set(100)
+
         self.zoom_entry = Entry(self.palette, width = 4,textvariable=self.zoom)
         self.zoom_entry.grid(row=0,column=2,sticky='ew')
 
@@ -374,49 +425,13 @@ class image_from_fileUI(image_sourceUI):
             self.palette.columnconfigure(i, weight=1)
         
         # bindings
-        self.zoom_entry.bind('<Return>',self.get_value)
-        #self.zoom_entry.bind('<B1-Motion>',self.motion)
-        #self.zoom_entry.bind('<Button-1>',self.button1)
-        self.zoom_entry.bind('<Up>',self.up)
-        self.zoom_entry.bind('<Down>',self.down)
+        self.zoom_entry.bind('<Return>',self.zoom_get_value)
+        self.zoom_entry.bind('<B1-Motion>',self.zoom_motion)
+        self.zoom_entry.bind('<Button-1>',self.zoom_button1)
+        self.zoom_entry.bind('<Up>',self.zoom_up)
+        self.zoom_entry.bind('<Down>',self.zoom_down)
 
     # widget callbacks                
-    def get_value(self,event):
-        self.parent.source_image[self.scratchpad_image_index].zoom_factor = int(self.zoom.get())
-        self.parent.source_image[self.scratchpad_image_index].crop_original_image()
-        self.display_in_scratchpad()
-        Event('param_change', generator=self.parent)
-    
-    def button1(self,event):
-        self.v=int(self.zoom.get())
-        self.old_coords = event.x, event.y
-
-    def motion(self,event):
-        xm1, ym1 = self.old_coords
-        xm = event.x
-        ym = event.y
-        self.v = int(self.v + (ym1-ym)/20)
-        self.zoom.set(self.v)
-        old_coords = xm, ym
-        Event('param_change', generator=self.parent)
-    
-    def up(self,event):
-        self.v=int(self.zoom.get())
-        self.v +=1
-        self.zoom.set(self.v)
-        self.parent.source_image[self.scratchpad_image_index].zoom_factor = int(self.zoom.get())
-        self.parent.source_image[self.scratchpad_image_index].crop_original_image()
-        self.display_in_scratchpad()
-        Event('param_change', generator=self.parent)
-
-    def down(self,event):
-        self.v=int(self.zoom.get())
-        self.v -=1
-        self.zoom.set(self.v)
-        self.parent.source_image[self.scratchpad_image_index].zoom_factor = int(self.zoom.get())
-        self.parent.source_image[self.scratchpad_image_index].crop_original_image()
-        self.display_in_scratchpad()
-        Event('param_change', generator=self.parent)
 
     def load_image(self):
         self.fileNames = filedialog.askopenfilename(multiple=True)
@@ -431,7 +446,7 @@ class image_from_fileUI(image_sourceUI):
         self.get_mouse_coords(event)
     
     def B1_motion_callback(self,event):
-        self.move_crop_zone(event)
+            self.move_crop_zone(event)
     
     def B1_release_callback(self,event):
         Event('param_change', generator=self.parent)
@@ -439,16 +454,7 @@ class image_from_fileUI(image_sourceUI):
     def add_image(self,event):   
         self.load_image
     
-    def move_crop_zone(self,event):
-        x, y = event.x, event.y
-        if self.scratch_canvas.old_coords:
-            x1, y1 = self.scratch_canvas.old_coords
-            self.center_x = self.parent.source_image[self.scratchpad_image_index].center_x
-            self.center_y =  self.parent.source_image[self.scratchpad_image_index].center_y
-            self.parent.source_image[self.scratchpad_image_index].center_x = self.center_x + (x1-x)/10
-            self.parent.source_image[self.scratchpad_image_index].center_y = self.center_y + (y1-y)/10
-            self.parent.source_image[self.scratchpad_image_index].crop_original_image()
-            self.display_in_scratchpad()
+
 
 class MaskUI(image_sourceUI):  
 
@@ -461,13 +467,24 @@ class MaskUI(image_sourceUI):
 
     def drawing_palette(self):
         self.palette = Frame(self.frame)
+        self.load_button = Button(self.palette, text='Load', relief=FLAT, command=self.load_image)
+        self.load_button.grid(row=0,column=0,sticky='ew')
+        self.zoom_entry = Entry(self.palette, width = 4,textvariable=self.zoom)
+        self.zoom_entry.grid(row=0,column=1,sticky='ew')
         self.palette_colors = ['black','white']
         self.pen_color = StringVar()
         self.pen_color.set(self.palette_colors[0])
+
+        #bindings
+        self.zoom_entry.bind('<Return>',self.zoom_get_value)
+        self.zoom_entry.bind('<B1-Motion>',self.zoom_motion)
+        self.zoom_entry.bind('<Button-1>',self.zoom_button1)
+        self.zoom_entry.bind('<Up>',self.zoom_up)
+        self.zoom_entry.bind('<Down>',self.zoom_down)
      
         for i in range(2):
             self.palet = Radiobutton(self.palette, variable=self.pen_color, value=self.palette_colors[i], bg=self.palette_colors[i])
-            self.palet.grid(row=0,column=i,sticky='ew')
+            self.palet.grid(row=0,column=i+2,sticky='ew')
 
         self.stroke = StringVar()
         self.stroke.set(50)
@@ -483,8 +500,14 @@ class MaskUI(image_sourceUI):
         self.get_mouse_coords(event)
     
     def B1_motion_callback(self,event):
-        self.draw(event)
-    
+        if len(self.source_image)>0:
+            if self.source_image[self.scratchpad_image_index].mode == 'file':
+                self.move_crop_zone(event)
+            else :
+                self.draw(event)
+        else:
+            self.draw(event)
+
     def B1_release_callback(self,event):
         Event('param_change', generator=self.parent)
 
@@ -519,7 +542,7 @@ class MaskUI(image_sourceUI):
         
     def add_image(self,event):  
         if self.scratchmode:
-            source = Mask(mask= self.image)
+            source = Mask(original= self.image, mode = 'draw')
             self.source_image.append(source)
             self.scratchpad_image_index = len(self.source_image)
         self.clear_scratchpad()
@@ -527,6 +550,15 @@ class MaskUI(image_sourceUI):
         self.scratchmode = True
         Event('param_change', generator=self.parent)
         print('scratch pad index', self.scratchpad_image_index) 
+    
+    def load_image(self):
+        self.fileNames = filedialog.askopenfilename(multiple=True)
+        for filename in self.fileNames:
+            self.original = Image.open(filename).convert('RGBA')
+            source = Mask(original= self.original, mode = 'file')
+            self.source_image.append(source)
+            self.display_in_scratchpad()
+        Event('param_change', generator=self.parent)
 
 
 class geometry_strategy_selectorUI():

@@ -13,9 +13,13 @@ class App(Observer.Observer):
         super().__init__()
         self.canvas_height = 500
         self.canvas_width = 500
-        self.image_sizex = 10000
-        self.image_sizey = 10000
+        self.display_sizex = 1000
+        self.display_sizey = 1000
+        self.file_sizex = 10000
+        self.file_sizey = 10000
+        self.display_to_file_factor = 10
         self.canvas_scalefactor = 0.5
+
         root=Tk()
         root.title('Maya the best')
         self.appUI = appUI(self, root, self.canvas_height, self.canvas_width)
@@ -69,16 +73,16 @@ class App(Observer.Observer):
 
     def save_output_image(self, event):
         print('rendering output image for ',self,' and saving to file')
-        self.output_image =Image.new("RGBA",(self.image_sizex,self.image_sizey),(255,255,255,255))
+        self.output_image =Image.new("RGBA",(self.file_sizex,self.file_sizey),(255,255,255,255))
         self.savepath = r'output image'        
         
         for layer in self.layers:
             for c in range(0,len(layer.clips)):
-                clip_image = layer.clips[c].processed_image
-                clip_center_x = layer.clips[c].position[0]
-                clip_center_y = layer.clips[c].position[1]
-                clip_nw_corner_x = int(layer.clips[c].position[0] - layer.clips[c].resize_x /2)
-                clip_nw_corner_y = int(layer.clips[c].position[1] - layer.clips[c].resize_y /2)
+                clip_image = layer.clips[c].process(mode = 'file')
+                clip_center_x = layer.clips[c].file_scaled_position[0]
+                clip_center_y = layer.clips[c].file_scaled_position[1]
+                clip_nw_corner_x = int(layer.clips[c].file_scaled_position[0] - layer.clips[c].resize_x*self.display_to_file_factor /2)
+                clip_nw_corner_y = int(layer.clips[c].file_scaled_position[1] - layer.clips[c].resize_y*self.display_to_file_factor /2)
                 self.output_image.paste(clip_image,(clip_nw_corner_x,clip_nw_corner_y),clip_image) #last argument is the mask to avoid punching a whole where alpha=0
  
         if not os.path.exists(self.savepath):

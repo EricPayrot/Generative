@@ -13,7 +13,7 @@ class appUI():
         self.xscrollbar = Scrollbar(self.canvas_frame, orient=HORIZONTAL)
         self.yscrollbar = Scrollbar(self.canvas_frame)
         self.output_canvas = Canvas(self.canvas_frame,bg='white', width=width, height=height,xscrollcommand=self.xscrollbar.set,yscrollcommand=self.yscrollbar.set)
-        self.output_canvas['scrollregion'] = (0, 0, self.parent.image_sizex, self.parent.image_sizey)
+        self.output_canvas['scrollregion'] = (0, 0, self.parent.display_sizex, self.parent.display_sizey)
         self.xscrollbar.config(command=self.output_canvas.xview)
         self.yscrollbar.config(command=self.output_canvas.yview)
         self.old_scale_ratio = 0.5
@@ -51,9 +51,9 @@ class appUI():
             # self.output_canvas.scale(ALL,self.center_x,self.center_y,1/self.old_scale_ratio,1/self.old_scale_ratio) #undo previous zoom
             # self.output_canvas.scale(ALL,self.center_x,self.center_y,self.new_scale_ratio,self.new_scale_ratio)
             self.scroll_region_x1 = 0
-            self.scroll_region_x2 = self.new_scale_ratio * self.parent.image_sizex
+            self.scroll_region_x2 = self.new_scale_ratio * self.parent.display_sizex
             self.scroll_region_y1 = 0
-            self.scroll_region_y2 = self.new_scale_ratio * self.parent.image_sizey
+            self.scroll_region_y2 = self.new_scale_ratio * self.parent.display_sizey
             bbox = (self.scroll_region_x1, self.scroll_region_y1, self.scroll_region_x2, self.scroll_region_y2)
             self.output_canvas['scrollregion'] = bbox
             self.old_scale_ratio = self.new_scale_ratio

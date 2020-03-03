@@ -143,7 +143,7 @@ class geometry(generator):
             self.parent.clips[c].position[1] = self.coordinates[c][1]
             self.parent.clips[c].old_position[0] = self.coordinates[c][0]
             self.parent.clips[c].old_position[1] = self.coordinates[c][1]
-            self.parent.clips[c].process()
+            self.parent.clips[c].processed_image = self.parent.clips[c].process(mode='display')
             self.parent.clips[c].place()
                  
 class grid(geometry):
@@ -206,13 +206,6 @@ class tree(geometry):
         self.param.append('nb_lin')
         self.param_label.append('nb lin')
         self.param_default.append(self.nb_lin)
-        # self.create_param_widgets()
-
-        # second group of widgets organized 4 per row
-        # self.param.clear()
-        # self.param_label.clear()
-        # self.param_default.clear()
-
         self.param.append('centerx')
         self.param_label.append('x')
         self.param_default.append(self.centerx)
@@ -240,8 +233,8 @@ class tree(geometry):
                     nb_col = 1
                 for x in range(0,nb_col):
                         cw,ch = (self.width,self.height)
-                        h=int((x+1)/(nb_col+1)*cw) + (self.centerx - self.canvas_w/2)
-                        v=int((y+1)/(self.nb_lin+1)*ch) + (self.centery - self.canvas_h/2)
+                        h=int((x+1)/(nb_col+1)*cw) + (self.centerx - cw/2)
+                        v=int((y+1)/(self.nb_lin+1)*ch) + (self.centery - ch/2)
                         coords = [h,v]
                         self.coordinates.append(coords)
                         cellx1 = int((x)/(nb_col+1)*cw)

@@ -14,7 +14,8 @@ class ImageClip():
         self.TKImage = None
         self.TKitem = None
         self.position = [100,100]
-        self.scaled_position = [100,100]
+        self.display_scaled_position = [100,100]
+        self.file_scaled_position = [1000,1000]
         self.old_position = [100,100]
         self.rotation = 0
         self.H_offset = 0
@@ -22,29 +23,37 @@ class ImageClip():
         self.V_offset = 0
         self.invert_mask = False
 
-    def process(self):
+    def process(self, mode = 'display'):
         self.canvas_scalefactor = self.generator.parent.parent.canvas_scalefactor
-        self.canvas.delete(self.TKitem)
-        self.processed_image = Image.new('RGBA',self.source_image.size,(0,0,0,0))
-        
-        self.scaled_position = [int(self.position[0]*self.canvas_scalefactor), int(self.position[1]*self.canvas_scalefactor)]
+        self.display_to_file_factor = self.generator.parent.parent.display_to_file_factor
+
+        processed_image = Image.new('RGBA',self.source_image.size,(0,0,0,0))
+
+        if mode == 'display':
+            self.display_scaled_position = [int(self.position[0]*self.canvas_scalefactor), int(self.position[1]*self.canvas_scalefactor)]
+        elif mode == 'file' :
+            self.file_scaled_position = [int(self.position[0]*self.display_to_file_factor), int(self.position[1]*self.display_to_file_factor)]
 
         if self.invert_mask == True:
             self.processed_mask = invert_mask(self.mask)
         else:
             self.processed_mask = self.mask
-        self.processed_image.paste(self.source_image,box=(0,0),mask = self.processed_mask.resize(self.source_image.size))
-        self.processed_image = self.processed_image.rotate(-self.rotation,expand=True)
-        self.processed_image = self.processed_image.resize((self.resize_x,self.resize_y),resample=0)
-        self.processed_image = offset_hsl(self.processed_image, H_offset=self.H_offset, S_offset=self.S_offset, V_offset=self.V_offset)
-    
+        processed_image.paste(self.source_image,box=(0,0),mask = self.processed_mask.resize(self.source_image.size))
+        processed_image = processed_image.rotate(-self.rotation,expand=True)
+        if mode == 'display':
+            processed_image = processed_image.resize((self.resize_x,self.resize_y),resample=0)
+        elif mode == 'file':
+            processed_image = processed_image.resize((self.resize_x*self.display_to_file_factor,self.resize_y*self.display_to_file_factor),resample=0)
+        processed_image = offset_hsl(processed_image, H_offset=self.H_offset, S_offset=self.S_offset, V_offset=self.V_offset)
+        return processed_image
 
     def place(self):
+        self.canvas.delete(self.TKitem)
         self.TKImage = ImageTk.PhotoImage(self.processed_image.resize((int(self.resize_x*self.canvas_scalefactor),int(self.resize_y*self.canvas_scalefactor)),resample=0))
-        self.TKitem=self.canvas.create_image(self.scaled_position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
+        self.TKitem=self.canvas.create_image(self.display_scaled_position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
 
     def update(self):
-        self.process()
+        self.processed_image = self.process(mode='display')
         self.place()
 
     def refresh_position(self):

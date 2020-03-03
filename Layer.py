@@ -13,8 +13,9 @@ class App(Observer.Observer):
         super().__init__()
         self.canvas_height = 500
         self.canvas_width = 500
-        self.image_sizex = 1000
-        self.image_sizey = 1000
+        self.image_sizex = 10000
+        self.image_sizey = 10000
+        self.canvas_scalefactor = 0.5
         root=Tk()
         root.title('Maya the best')
         self.appUI = appUI(self, root, self.canvas_height, self.canvas_width)
@@ -26,6 +27,7 @@ class App(Observer.Observer):
         self.add_layer()
         self.observe('new_layer',self.add_layer)
         self.observe('select_layer',self.select_layer)
+        self.observe('zoom_factor_changed',self.zoom_change_callback)
         # event binding
         root.bind('<Control-s>',self.save_output_image)
         
@@ -60,6 +62,11 @@ class App(Observer.Observer):
         for layer in self.layers:
                 self.canvas.tag_raise(layer.layerID)
     
+    def zoom_change_callback(self, generator, param):
+        self.canvas_scalefactor = param
+        for layer in self.layers:
+            layer.refresh_canvas()
+
     def save_output_image(self, event):
         print('rendering output image for ',self,' and saving to file')
         self.output_image =Image.new("RGBA",(self.image_sizex,self.image_sizey),(255,255,255,255))
@@ -127,8 +134,8 @@ class Layer(Observer.Observer):
         self.observe('geometry_strategy_change',self.change_geometry_strategy)
         self.observe('toggle_layer_visibility',self.toggle_layer_visibility)
         
-
         self.update(self)
+        self.parent.appUI.apply_zoom_factor()
     
     def toggle_layer_visibility(self, generator):
         if generator == self:
@@ -215,8 +222,7 @@ class Layer(Observer.Observer):
         for clip in self.clips:
             clip.update()
         self.parent.refresh_layer_stacking_order()
-        self.parent.appUI.apply_zoom_factor()
-    
+     
     def refresh_position(self, generator=all):
         for clip in self.clips:
             clip.refresh_position()

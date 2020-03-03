@@ -143,7 +143,8 @@ class geometry(generator):
             self.parent.clips[c].position[1] = self.coordinates[c][1]
             self.parent.clips[c].old_position[0] = self.coordinates[c][0]
             self.parent.clips[c].old_position[1] = self.coordinates[c][1]
-            self.parent.clips[c].process_and_place(self.canvas)
+            self.parent.clips[c].process()
+            self.parent.clips[c].place()
                  
 class grid(geometry):
     def __init__(self, parent):

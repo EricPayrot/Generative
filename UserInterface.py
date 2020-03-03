@@ -12,12 +12,13 @@ class appUI():
         self.canvas_frame = Frame(parentUI)
         self.xscrollbar = Scrollbar(self.canvas_frame, orient=HORIZONTAL)
         self.yscrollbar = Scrollbar(self.canvas_frame)
-        self.output_canvas = Canvas(self.canvas_frame,bg='white', width=width, height=height, 
-        scrollregion=(0, 0, self.parent.image_sizex, self.parent.image_sizey),xscrollcommand=self.xscrollbar.set,yscrollcommand=self.yscrollbar.set)
+        self.output_canvas = Canvas(self.canvas_frame,bg='white', width=width, height=height,xscrollcommand=self.xscrollbar.set,yscrollcommand=self.yscrollbar.set)
+        self.output_canvas['scrollregion'] = (0, 0, self.parent.image_sizex, self.parent.image_sizey)
         self.xscrollbar.config(command=self.output_canvas.xview)
         self.yscrollbar.config(command=self.output_canvas.yview)
+        self.old_scale_ratio = 0.5
         self.canvas_zoom = StringVar()
-        self.canvas_zoom.set(100)
+        self.canvas_zoom.set(50)
         self.zoom_entry = Entry(self.canvas_frame, textvariable=self.canvas_zoom, width=4)
 
         self.control_panel = Frame(parentUI,height=height,width=250,padx=3)
@@ -42,8 +43,23 @@ class appUI():
         self.zoom_entry.bind('<Return>',self.apply_zoom_factor)
 
     def apply_zoom_factor(self, event=None):
-        self.output_canvas.scale(ALL,0,0,float(self.canvas_zoom.get())/100,float(self.canvas_zoom.get())/100)
+        if float(self.canvas_zoom.get()) > 0:
+            self.new_scale_ratio = float(self.canvas_zoom.get()) / 100
+            Event('zoom_factor_changed',generator = self, param=self.new_scale_ratio)
+            self.center_x = self.output_canvas.winfo_width()/2
+            self.center_y = self.output_canvas.winfo_height()/2
+            # self.output_canvas.scale(ALL,self.center_x,self.center_y,1/self.old_scale_ratio,1/self.old_scale_ratio) #undo previous zoom
+            # self.output_canvas.scale(ALL,self.center_x,self.center_y,self.new_scale_ratio,self.new_scale_ratio)
+            self.scroll_region_x1 = 0
+            self.scroll_region_x2 = self.new_scale_ratio * self.parent.image_sizex
+            self.scroll_region_y1 = 0
+            self.scroll_region_y2 = self.new_scale_ratio * self.parent.image_sizey
+            bbox = (self.scroll_region_x1, self.scroll_region_y1, self.scroll_region_x2, self.scroll_region_y2)
+            self.output_canvas['scrollregion'] = bbox
+            self.old_scale_ratio = self.new_scale_ratio
 
+
+    
     def reorder_layer_panels():
         print('***********************reorder layers')
 

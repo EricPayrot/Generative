@@ -131,3 +131,5 @@ dmypy.json
 
 output image/
 pics/
+test tkzinc.py
+test tkzinc.txt

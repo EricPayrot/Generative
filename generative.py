@@ -1,7 +1,7 @@
 from tkinter import*
 from PIL import Image, ImageDraw, ImageChops
-import os, glob, Observer
-from imageClip import ImageClip
+import os, glob
+#from imageClip import ImageClip
 from UserInterface import *
 from Generator import*
 from Layer import*

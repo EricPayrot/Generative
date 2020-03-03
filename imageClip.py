@@ -1,6 +1,6 @@
 import tkinter, glob, random
 from PIL import Image, ImageTk, ImageOps, ImageChops
-from Observer import*
+from Observer import Observer, Event
 
 class ImageClip():
     def __init__(self,source,canvas,generator, mask):
@@ -14,6 +14,7 @@ class ImageClip():
         self.TKImage = None
         self.TKitem = None
         self.position = [100,100]
+        self.scaled_position = [100,100]
         self.old_position = [100,100]
         self.rotation = 0
         self.H_offset = 0
@@ -21,9 +22,13 @@ class ImageClip():
         self.V_offset = 0
         self.invert_mask = False
 
-    def process_and_place(self,canvas):
+    def process(self):
+        self.canvas_scalefactor = self.generator.parent.parent.canvas_scalefactor
         self.canvas.delete(self.TKitem)
         self.processed_image = Image.new('RGBA',self.source_image.size,(0,0,0,0))
+        
+        self.scaled_position = [int(self.position[0]*self.canvas_scalefactor), int(self.position[1]*self.canvas_scalefactor)]
+
         if self.invert_mask == True:
             self.processed_mask = invert_mask(self.mask)
         else:
@@ -32,15 +37,19 @@ class ImageClip():
         self.processed_image = self.processed_image.rotate(-self.rotation,expand=True)
         self.processed_image = self.processed_image.resize((self.resize_x,self.resize_y),resample=0)
         self.processed_image = offset_hsl(self.processed_image, H_offset=self.H_offset, S_offset=self.S_offset, V_offset=self.V_offset)
-        self.TKImage = ImageTk.PhotoImage(self.processed_image)
-        self.TKitem=self.canvas.create_image(self.position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
+    
+
+    def place(self):
+        self.TKImage = ImageTk.PhotoImage(self.processed_image.resize((int(self.resize_x*self.canvas_scalefactor),int(self.resize_y*self.canvas_scalefactor)),resample=0))
+        self.TKitem=self.canvas.create_image(self.scaled_position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
 
     def update(self):
-        self.process_and_place(self.canvas)
+        self.process()
+        self.place()
 
     def refresh_position(self):
-        dx = self.position[0] - self.old_position[0]
-        dy = self.position[1] - self.old_position[1]
+        dx = int((self.position[0] - self.old_position[0])*self.canvas_scalefactor)
+        dy = int((self.position[1] - self.old_position[1])*self.canvas_scalefactor)
         self.canvas.move(self.TKitem, dx, dy)
         self.old_position[0] = self.position[0]
         self.old_position[1] = self.position[1]

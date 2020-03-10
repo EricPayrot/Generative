@@ -9,9 +9,9 @@ class ImageClip():
         self.processed_image = None
         self.generator = generator
         self.canvas = canvas
-        self.resize_x = 50
-        self.resize_y = 50
-        self.TKImage = None
+        self.resize_x = 120
+        self.resize_y = 120
+        #self.TKImage = None
         self.TKitem = None
         self.position = [100,100]
         self.display_scaled_position = [100,100]
@@ -22,6 +22,21 @@ class ImageClip():
         self.S_offset = 0
         self.V_offset = 0
         self.invert_mask = False
+    
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Don't pickle baz
+        del state["TKImage"]
+        del state["canvas"]
+        del state["generator"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        # Add baz back since it doesn't exist in the pickle
+        self.TKImage = None
+        #self.canvas = canvas
+        #self.generator = generator
 
     def process(self, mode = 'display'):
         self.canvas_scalefactor = self.generator.parent.parent.canvas_scalefactor
@@ -51,6 +66,7 @@ class ImageClip():
         self.canvas.delete(self.TKitem)
         self.TKImage = ImageTk.PhotoImage(self.processed_image.resize((int(self.resize_x*self.canvas_scalefactor),int(self.resize_y*self.canvas_scalefactor)),resample=0))
         self.TKitem=self.canvas.create_image(self.display_scaled_position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
+
 
     def update(self):
         self.processed_image = self.process(mode='display')

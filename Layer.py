@@ -7,6 +7,8 @@ from UserInterface import*
 from datetime import datetime
 from Generator import*
 from Strategy import*
+import pickle
+from tkinter import filedialog
 
 class App(Observer.Observer):
     def __init__(self):
@@ -34,6 +36,8 @@ class App(Observer.Observer):
         self.observe('zoom_factor_changed',self.zoom_change_callback)
         # event binding
         root.bind('<Control-s>',self.save_output_image)
+        root.bind('<Control-d>', self.dump_state)
+        root.bind('<Control-o>', self.load_state)
         
         root.mainloop()
     
@@ -93,6 +97,43 @@ class App(Observer.Observer):
         
         self.filename = self.savepath + '/' + 'output_' + self.datetime + '.png'
         self.output_image.save(self.filename)
+    
+    def dump_state(self, event):
+        print('dumping state to file')
+        self.savepath = r'state'
+        if not os.path.exists(self.savepath):
+            os.makedirs(self.savepath,mode=0o755)
+
+        self.now = datetime.now()
+        self.datetime = self.now.strftime("%d_%m_%Y_%H%M%S")
+        self.filename = self.savepath + '/' + 'state_' + self.datetime + '.pkl'
+
+        source_images = []
+        clips = []
+
+        for layer in self.layers:
+            source_images.append(layer.image_source.get_source_image())
+            clips.append(layer.clips)
+
+        with open(self.filename,'wb') as f:
+            pickle.dump(source_images,f)
+            pickle.dump(clips, f)
+    
+    def load_state(self, event):
+        filename = filedialog.askopenfilename()
+        clips = []
+        with open(filename, 'rb') as f:
+            source_images = pickle.load(f)
+            clips = pickle.load(f)
+
+        for layer in self.layers:
+            for source_image in source_images[0]:
+                layer.image_source.get_source_image().append(source_image)
+            for clip in clips[0]:
+                layer.clips.append(clip)
+            layer.refresh_canvas()
+
+
 
 class Layer(Observer.Observer):
     def __init__(self,parent):

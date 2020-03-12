@@ -56,6 +56,7 @@ class App(Observer.Observer):
         self.newlayer = Layer(parent=self)
         self.layers.append(self.newlayer)
         self.select_layer(self.newlayer)
+        return self.newlayer
         
     def select_layer(self, generator):
         self.selected_layer = generator
@@ -136,22 +137,21 @@ class App(Observer.Observer):
         dict ={}
         dict['app'] = self.getdict()
         for layer in self.layers:
-            dict['layer'+str(id(layer))] = layer.getdict()
+            layerID = 'layer'+str(id(layer))
+            dict[layerID] = layer.getdict()
             
             for source in layer.image_source.get_source_image():
                 source.save_original(self.source_folder_path)
-                dict['source'+str(id(source.image))] = source.getdict()
+                dict[layerID]['source'+str(id(source.image))] = source.getdict()
             
             for mask in layer.masksource.mask:
                 mask.save_original(self.mask_folder_path)
-                dict['mask'+str(id(mask.image))] = mask.getdict()
+                dict[layerID]['mask'+str(id(mask.image))] = mask.getdict()
             
             for clip in layer.clips:
-                dict['clip'+str(id(clip))] = clip.getdict()
-            
-
-
-        #dump dictionary
+                dict[layerID]['clip'+str(id(clip))] = clip.getdict()
+           
+        #dump dictionary to file
         with open(self.filename,'w') as f:
             json.dump(dict,f, sort_keys=True, indent=4)
             
@@ -161,9 +161,43 @@ class App(Observer.Observer):
         with open(filename, 'rb') as f:
             dict = json.load(f)
             print(dict)
-        for layer in self.layers:
-            layer.refresh_canvas()
+        # delete existing layers, sources, masks and clips
 
+        # instanciate objects layer by layer
+        layer_import_dict = {}
+        source_import_dict = {}
+        mask_import_dict = {}
+        clip_import_dict = {}
+
+        for layer in dict['app']['layers']:
+            new_layer = self.add_layer()
+            new_layer.setdict(dict[layer])
+            layer_import_dict[layer] = new_layer
+            
+            for source in dict[layer]['source_images']:
+                original = Image.open(dict[layer][source]['file_name'])
+                new_source = SourceImage(original= original)
+                layer_import_dict[layer].image_source.get_source_image().append(new_source)
+                source_import_dict[source] = new_source
+        
+            for mask in dict[layer]['masks']:
+                original = Image.open(dict[layer][mask]['file_name'])
+                new_mask = Mask(original= original)
+                layer_import_dict[layer].masksource.mask.append(new_mask)
+                mask_import_dict[mask] = new_mask
+
+            for clip in dict[layer]['clips']:
+                source = source_import_dict[dict[layer][clip]['source']].image
+                mask = mask_import_dict[dict[layer][clip]['mask']].image
+                generator = layer_import_dict[layer].geometry.instance
+                new_clip = ImageClip(source, self.canvas, generator, mask)
+                new_clip.setdict(dict[layer][clip])
+                layer_import_dict[layer].clips.append(new_clip)
+                clip_import_dict[clip] = new_clip
+
+            layer_import_dict[layer].refresh_canvas()
+
+        print(source_import_dict)
 
 
 class Layer(Observer.Observer):
@@ -223,8 +257,8 @@ class Layer(Observer.Observer):
         dict['layerID'] = self.layerID
         dict['layerIndex'] = self.layerIndex
         dict['image_source_strategy'] = self.image_source_strategy
-        dict['source_images'] = ['source'+str(id(source)) for source in self.image_source.get_source_image()]
-        dict['masks'] = ['mask'+str(id(mask)) for mask in self.masksource.mask]
+        dict['source_images'] = ['source'+str(id(source.image)) for source in self.image_source.get_source_image()]
+        dict['masks'] = ['mask'+str(id(mask.image)) for mask in self.masksource.mask]
         dict['geometry'] = self.geometry.instance.getdict()
         dict['resize'] = self.resize.getdict()
         dict['rotate'] = self.rotate.getdict()
@@ -233,13 +267,18 @@ class Layer(Observer.Observer):
         return dict
 
     def setdict(self, dict):
-        self.geometry_strategy = dict['geometry_strategy'] = self.geometry_strategy
-        self.clips = dict['clips']
+        self.geometry_strategy = dict['geometry_strategy']
         self.layer_visible = dict['layer_visible']
-        self.layerID = dict['layerID']
         self.layerIndex = dict['layerIndex']
         self.image_source_strategy = dict['image_source_strategy']
-    
+        self.layer_visible = dict['layer_visible']
+        self.layerIndex = dict['layerIndex']
+        self.geometry.instance.setdict(dict['geometry'])
+        self.resize.setdict(dict['resize'])
+        self.rotate.setdict(dict['rotate'])
+        self.hsv.setdict(dict['hsv'])
+        self.mask_invert.setdict(dict['mask_invert'])
+
     def toggle_layer_visibility(self, generator):
         if generator == self:
             if self.layer_visible == True:

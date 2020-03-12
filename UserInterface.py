@@ -480,8 +480,12 @@ class image_from_fileUI(image_sourceUI):
 
     # widget callbacks                
 
-    def load_image(self):
-        self.fileNames = filedialog.askopenfilename(multiple=True)
+    def load_image(self,filename = None):
+        if filename:
+            self.fileNames = filename
+        else:
+            self.fileNames = filedialog.askopenfilename(multiple=True)
+        
         for filename in self.fileNames:
             self.original = Image.open(filename).convert('RGBA')
             source = SourceImage(original= self.original)

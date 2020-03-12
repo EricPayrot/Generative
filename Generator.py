@@ -28,6 +28,10 @@ class generator(Observer.Observer):
                 dict[str(p)] = getattr(self,p)
             return dict
 
+    def setdict(self,dict):
+            for p in self.param:
+                setattr(self,p,dict[str(p)])
+
     def create_param_widgets(self, nb_col=1):
         i=0
         col=0

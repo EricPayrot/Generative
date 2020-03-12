@@ -40,6 +40,17 @@ class ImageClip():
         dict['invert_mask'] = self.invert_mask
         return dict
 
+    def setdict(self, dict):
+        self.tag = dict['tag']
+        self.resize_x = dict['resize_x']
+        self.resize_y = dict['resize_y']
+        self.position = dict['position']
+        self.rotation = dict['rotation']
+        self.H_offset = dict['H_offset']
+        self.S_offset = dict['S_offset']
+        self.V_offset = dict['V_offset']
+        self.invert_mask = dict['invert_mask']
+
     def process(self, mode = 'display'):
         self.canvas_scalefactor = self.generator.parent.parent.canvas_scalefactor
         self.display_to_file_factor = self.generator.parent.parent.display_to_file_factor

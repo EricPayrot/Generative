@@ -1,0 +1,415 @@
+{
+    "app": {
+        "layers": [
+            "layer2821940501520",
+            "layer2821974574704"
+        ]
+    },
+    "clip2821925636704": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940651536",
+        "position": [
+            252.0,
+            126.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821938755760": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940777936",
+        "position": [
+            252.0,
+            378.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821938755904": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940651536",
+        "position": [
+            126.0,
+            378.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821938757440": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940777936",
+        "position": [
+            378.0,
+            126.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821938757488": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940651536",
+        "position": [
+            252.0,
+            252.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821940605856": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940651536",
+        "position": [
+            126.0,
+            252.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821940740928": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940777936",
+        "position": [
+            126.0,
+            126.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821940779520": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940651536",
+        "position": [
+            378.0,
+            252.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821940779904": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940651536",
+        "position": [
+            378.0,
+            378.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940779664",
+        "tag": "layer2821940501520"
+    },
+    "clip2821974574896": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            820.0,
+            126.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974574944": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            694.0,
+            378.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974576720": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            694.0,
+            252.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974698160": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            694.0,
+            126.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974733440": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            820.0,
+            252.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974733824": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            820.0,
+            378.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974734208": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            946.0,
+            126.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974734592": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            946.0,
+            252.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "clip2821974734976": {
+        "H_offset": 0,
+        "S_offset": 0,
+        "V_offset": 0,
+        "invert_mask": false,
+        "mask": "mask2821940778176",
+        "position": [
+            946.0,
+            378.0
+        ],
+        "resize_x": 30,
+        "resize_y": 30,
+        "rotation": 0,
+        "source": "source2821940778368",
+        "tag": "layer2821974574704"
+    },
+    "layer2821940501520": {
+        "clips": [
+            "clip2821940740928",
+            "clip2821940605856",
+            "clip2821938755904",
+            "clip2821925636704",
+            "clip2821938757488",
+            "clip2821938755760",
+            "clip2821938757440",
+            "clip2821940779520",
+            "clip2821940779904"
+        ],
+        "geometry": {
+            "centerx": 252,
+            "centery": 252,
+            "height": 504,
+            "nb_col": 3,
+            "nb_lin": 3,
+            "width": 504
+        },
+        "geometry_strategy": "grid",
+        "hsv": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0
+        },
+        "image_source_strategy": "scratchpad",
+        "layerID": "layer2821940501520",
+        "layerIndex": 1,
+        "layer_visible": true,
+        "mask_invert": {
+            "mask_invert": false
+        },
+        "masks": [
+            "mask2821974699744",
+            "mask2821974698256"
+        ],
+        "resize": {
+            "resize": 30
+        },
+        "rotate": {
+            "rotation": 0
+        },
+        "source_images": [
+            "source2821940779232"
+        ]
+    },
+    "layer2821974574704": {
+        "clips": [
+            "clip2821974698160",
+            "clip2821974576720",
+            "clip2821974574944",
+            "clip2821974574896",
+            "clip2821974733440",
+            "clip2821974733824",
+            "clip2821974734208",
+            "clip2821974734592",
+            "clip2821974734976"
+        ],
+        "geometry": {
+            "centerx": 820,
+            "centery": 252,
+            "height": 504,
+            "nb_col": 3,
+            "nb_lin": 3,
+            "width": 504
+        },
+        "geometry_strategy": "grid",
+        "hsv": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0
+        },
+        "image_source_strategy": "file",
+        "layerID": "layer2821974574704",
+        "layerIndex": 2,
+        "layer_visible": true,
+        "mask_invert": {
+            "mask_invert": false
+        },
+        "masks": [
+            "mask2821940651440"
+        ],
+        "resize": {
+            "resize": 30
+        },
+        "rotate": {
+            "rotation": 0
+        },
+        "source_images": [
+            "source2821974699600"
+        ]
+    },
+    "mask2821940651536": {
+        "file_name": "state/gen12_03_2020_120343/mask/mask_2821940651488.png",
+        "mode": "draw",
+        "original": 2821940651488,
+        "zoom_factor": 100
+    },
+    "mask2821940777936": {
+        "file_name": "state/gen12_03_2020_120343/mask/mask_2821940650528.png",
+        "mode": "draw",
+        "original": 2821940650528,
+        "zoom_factor": 100
+    },
+    "mask2821940778176": {
+        "file_name": "state/gen12_03_2020_120343/mask/mask_2821974608912.png",
+        "mode": "draw",
+        "original": 2821974608912,
+        "zoom_factor": 100
+    },
+    "source2821940778368": {
+        "file_name": "state/gen12_03_2020_120343/source/source_2821974733584.png",
+        "zoom_factor": 100
+    },
+    "source2821940779664": {
+        "file_name": "state/gen12_03_2020_120343/source/source_2821940607104.png",
+        "zoom_factor": 100
+    }
+}

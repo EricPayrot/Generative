@@ -8,6 +8,8 @@ from datetime import datetime
 from Generator import*
 from Strategy import*
 import pickle
+import dill
+import json
 from tkinter import filedialog
 
 class App(Observer.Observer):
@@ -40,6 +42,14 @@ class App(Observer.Observer):
         root.bind('<Control-o>', self.load_state)
         
         root.mainloop()
+
+    def getdict(self):
+        dict = {}
+        dict['layers'] = ['layer'+str(id(layer)) for layer in self.layers]
+        return dict
+
+    def setdict(self, dict):
+        self.layers = dict['layers']
     
     def add_layer(self):
         print('add layer')
@@ -100,37 +110,58 @@ class App(Observer.Observer):
     
     def dump_state(self, event):
         print('dumping state to file')
-        self.savepath = r'state'
-        if not os.path.exists(self.savepath):
-            os.makedirs(self.savepath,mode=0o755)
 
+        # prepare save directory structure
         self.now = datetime.now()
         self.datetime = self.now.strftime("%d_%m_%Y_%H%M%S")
-        self.filename = self.savepath + '/' + 'state_' + self.datetime + '.pkl'
+        self.savepath = r'state'
+        self.dump_folder_path = self.savepath + '/gen' + self.datetime
+        self.source_folder_path = self.dump_folder_path + '/source'
+        self.mask_folder_path = self.dump_folder_path + '/mask'
+        self.filename = self.dump_folder_path + '/' + 'state_' + self.datetime + '.json'
+        
+        if not os.path.exists(self.savepath):
+            os.makedirs(self.savepath,mode=0o755)
+        
+        if not os.path.exists(self.dump_folder_path):
+            os.makedirs(self.dump_folder_path,mode=0o755)
 
-        source_images = []
-        clips = []
+        if not os.path.exists(self.source_folder_path):
+            os.makedirs(self.source_folder_path,mode=0o755)
 
+        if not os.path.exists(self.mask_folder_path):
+            os.makedirs(self.mask_folder_path,mode=0o755)
+
+        #build dictionary
+        dict ={}
+        dict['app'] = self.getdict()
         for layer in self.layers:
-            source_images.append(layer.image_source.get_source_image())
-            clips.append(layer.clips)
+            dict['layer'+str(id(layer))] = layer.getdict()
+            
+            for source in layer.image_source.get_source_image():
+                source.save_original(self.source_folder_path)
+                dict['source'+str(id(source.image))] = source.getdict()
+            
+            for mask in layer.masksource.mask:
+                mask.save_original(self.mask_folder_path)
+                dict['mask'+str(id(mask.image))] = mask.getdict()
+            
+            for clip in layer.clips:
+                dict['clip'+str(id(clip))] = clip.getdict()
+            
 
-        with open(self.filename,'wb') as f:
-            pickle.dump(source_images,f)
-            pickle.dump(clips, f)
-    
+
+        #dump dictionary
+        with open(self.filename,'w') as f:
+            json.dump(dict,f, sort_keys=True, indent=4)
+            
+
     def load_state(self, event):
         filename = filedialog.askopenfilename()
-        clips = []
         with open(filename, 'rb') as f:
-            source_images = pickle.load(f)
-            clips = pickle.load(f)
-
+            dict = json.load(f)
+            print(dict)
         for layer in self.layers:
-            for source_image in source_images[0]:
-                layer.image_source.get_source_image().append(source_image)
-            for clip in clips[0]:
-                layer.clips.append(clip)
             layer.refresh_canvas()
 
 
@@ -141,10 +172,12 @@ class Layer(Observer.Observer):
         self.parent = parent
         self.canvas = self.parent.canvas
         self.geometry_strategy = 'grid'
+        self.image_source_strategy = 'scratchpad'
         self.clips = []
         self.layer_visible = True
 
-        self.layerID = str(self).replace('.','').replace(' ','_')
+        #self.layerID = str(self).replace('.','').replace(' ','_')
+        self.layerID = 'layer' + str(id(self))
         self.layerIndex = len(self.parent.layers)+1
         self.layerUI = layerUI(self, self.parent.control_panel)
         self.control_panel = self.layerUI.control_panel
@@ -181,6 +214,31 @@ class Layer(Observer.Observer):
         
         self.update(self)
         self.parent.appUI.apply_zoom_factor()
+
+    def getdict(self):
+        dict = {}
+        dict['geometry_strategy'] = self.geometry_strategy
+        dict['clips'] = ['clip'+str(id(clip)) for clip in self.clips]
+        dict['layer_visible'] = self.layer_visible
+        dict['layerID'] = self.layerID
+        dict['layerIndex'] = self.layerIndex
+        dict['image_source_strategy'] = self.image_source_strategy
+        dict['source_images'] = ['source'+str(id(source)) for source in self.image_source.get_source_image()]
+        dict['masks'] = ['mask'+str(id(mask)) for mask in self.masksource.mask]
+        dict['geometry'] = self.geometry.instance.getdict()
+        dict['resize'] = self.resize.getdict()
+        dict['rotate'] = self.rotate.getdict()
+        dict['hsv'] = self.hsv.getdict()
+        dict['mask_invert'] = self.mask_invert.getdict()
+        return dict
+
+    def setdict(self, dict):
+        self.geometry_strategy = dict['geometry_strategy'] = self.geometry_strategy
+        self.clips = dict['clips']
+        self.layer_visible = dict['layer_visible']
+        self.layerID = dict['layerID']
+        self.layerIndex = dict['layerIndex']
+        self.image_source_strategy = dict['image_source_strategy']
     
     def toggle_layer_visibility(self, generator):
         if generator == self:
@@ -213,7 +271,8 @@ class Layer(Observer.Observer):
             self.geometry = Geometry(strategy=tree, parent=self)
         else:
             print('no change')
-        self.update(generator=self)
+        if self == generator:
+            self.update(generator=self)
 
     def update(self, generator, param = None):
         if generator == self:

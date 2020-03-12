@@ -22,6 +22,12 @@ class generator(Observer.Observer):
         #self.observe('param_change',self.param_has_changed)
         self.create_param_widgets(nb_col=1)
 
+    def getdict(self):
+            dict = {}
+            for p in self.param:
+                dict[str(p)] = getattr(self,p)
+            return dict
+
     def create_param_widgets(self, nb_col=1):
         i=0
         col=0
@@ -62,9 +68,26 @@ class imageSource(generator):
         super().__init__(parent)
         self.source_image = []
         self.mask = []
-        self.source_image_width = 300
-        self.source_image_height = 300
-        
+        # self.source_image_width = 300
+        # self.source_image_height = 300
+
+    def getdict(self):
+        dict = {}
+        dict['source_images'] = [id(source) for source in self.source_image]
+        dict['masks'] = [id(mask) for mask in self.mask]
+        for source in self.source_image:
+            dict[id(source)] = source.getdict()
+        for mask in self.mask:
+            dict[id(mask)] = mask.getdict()
+        return dict
+
+    def setdict(self, dict):
+        self.geometry_strategy = dict['geometry_strategy'] = self.geometry_strategy
+        self.clips = dict['clips']
+        self.layer_visible = dict['layer_visible']
+        self.layerID = dict['layerID']
+        self.layerIndex = dict['layerIndex']
+        self.image_source_strategy = dict['image_source_strategy']    
          
     def update(self):
         pass

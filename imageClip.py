@@ -1,6 +1,7 @@
 import tkinter, glob, random
 from PIL import Image, ImageTk, ImageOps, ImageChops
 from Observer import Observer, Event
+import os
 
 class ImageClip():
     def __init__(self,source,canvas,generator, mask):
@@ -8,6 +9,7 @@ class ImageClip():
         self.mask = mask
         self.processed_image = None
         self.generator = generator
+        self.tag = generator.tag
         self.canvas = canvas
         self.resize_x = 120
         self.resize_y = 120
@@ -23,20 +25,20 @@ class ImageClip():
         self.V_offset = 0
         self.invert_mask = False
     
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        # Don't pickle baz
-        del state["TKImage"]
-        del state["canvas"]
-        del state["generator"]
-        return state
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
-        # Add baz back since it doesn't exist in the pickle
-        self.TKImage = None
-        #self.canvas = canvas
-        #self.generator = generator
+    def getdict(self):
+        dict = {}
+        dict['source'] = 'source'+str(id(self.source_image))
+        dict['mask'] = 'mask'+str(id(self.mask))
+        dict['tag'] = self.tag
+        dict['resize_x'] = self.resize_x
+        dict['resize_y'] = self.resize_y
+        dict['position'] = self.position
+        dict['rotation'] = self.rotation
+        dict['H_offset'] = self.H_offset
+        dict['S_offset'] = self.S_offset
+        dict['V_offset'] = self.V_offset
+        dict['invert_mask'] = self.invert_mask
+        return dict
 
     def process(self, mode = 'display'):
         self.canvas_scalefactor = self.generator.parent.parent.canvas_scalefactor
@@ -65,7 +67,7 @@ class ImageClip():
     def place(self):
         self.canvas.delete(self.TKitem)
         self.TKImage = ImageTk.PhotoImage(self.processed_image.resize((int(self.resize_x*self.canvas_scalefactor),int(self.resize_y*self.canvas_scalefactor)),resample=0))
-        self.TKitem=self.canvas.create_image(self.display_scaled_position,image=self.TKImage,anchor='center',tag=self.generator.tag, state='normal')
+        self.TKitem=self.canvas.create_image(self.display_scaled_position,image=self.TKImage,anchor='center',tag=self.tag, state='normal')
 
 
     def update(self):
@@ -82,6 +84,7 @@ class ImageClip():
 class SourceImage():
     def __init__(self, original):
         self.original = original
+        self.file_name = None
         self.image = None
         self.zoom_factor = 100
         self.width, self.height = self.original.size
@@ -96,11 +99,23 @@ class SourceImage():
         self.y2 = self.center_y+100/self.zoom_factor*100
         bbox=(self.x1,self.y1,self.x2,self.y2)
         self.image = self.original.crop(bbox)
+    
+    def getdict(self):
+        dict = {}
+        dict['file_name'] = self.file_name
+        dict['zoom_factor'] = self.zoom_factor
+        return dict
+    
+    def save_original(self, fp=None):
+        self.savepath = fp
+        self.file_name = self.savepath + '/' + 'source_' + str(id(self.original)) + '.png'
+        self.original.save(self.file_name)
 
 class Mask():
     def __init__(self, original, mode = 'draw'):
         super().__init__()
         self.original = original
+        self.file_name = None
         self.image = None
         self.mode = mode
         self.zoom_factor = 100
@@ -125,6 +140,19 @@ class Mask():
         M = M.convert('L')
         N= M.point(lambda x : 255 if (x < 128) else 0)
         self.image = N
+
+    def getdict(self):
+        dict = {}
+        dict['original'] = id(self.original)
+        dict['mode'] = self.mode
+        dict['file_name'] = self.file_name
+        dict['zoom_factor'] = self.zoom_factor
+        return dict
+    
+    def save_original(self, fp=None):
+        self.savepath = fp
+        self.file_name = self.savepath + '/' + 'mask_' + str(id(self.original)) + '.png'
+        self.original.save(self.file_name)
 
 
 def offset_hsl(image, H_offset=0, S_offset=0, V_offset=0):

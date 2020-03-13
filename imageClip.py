@@ -1,10 +1,10 @@
 import tkinter, glob, random
 from PIL import Image, ImageTk, ImageOps, ImageChops
-from Observer import Observer, Event
+#from Observer import Observer, Event
 import os
 
 class ImageClip():
-    def __init__(self,source,canvas,generator, mask):
+    def __init__(self,source=None,canvas=None,generator=None, mask=None):
         self.source_image=source
         self.mask = mask
         self.processed_image = None
@@ -28,7 +28,8 @@ class ImageClip():
     def getdict(self):
         dict = {}
         dict['source'] = 'source'+str(id(self.source_image))
-        dict['mask'] = 'mask'+str(id(self.mask))
+        if self.mask != None:
+            dict['mask'] = 'mask'+str(id(self.mask))
         dict['tag'] = self.tag
         dict['resize_x'] = self.resize_x
         dict['resize_y'] = self.resize_y
@@ -61,11 +62,15 @@ class ImageClip():
             self.display_scaled_position = [int(self.position[0]*self.canvas_scalefactor), int(self.position[1]*self.canvas_scalefactor)]
         elif mode == 'file' :
             self.file_scaled_position = [int(self.position[0]*self.display_to_file_factor), int(self.position[1]*self.display_to_file_factor)]
+        if self.mask == None:
+            mask = Image.new("L",(200,200),255)
+        else:
+            mask = self.mask
 
         if self.invert_mask == True:
-            self.processed_mask = invert_mask(self.mask)
+            self.processed_mask = invert_mask(mask)
         else:
-            self.processed_mask = self.mask
+            self.processed_mask = mask
         processed_image.paste(self.source_image,box=(0,0),mask = self.processed_mask.resize(self.source_image.size))
         processed_image = processed_image.rotate(-self.rotation,expand=True)
         if mode == 'display':
@@ -79,7 +84,6 @@ class ImageClip():
         self.canvas.delete(self.TKitem)
         self.TKImage = ImageTk.PhotoImage(self.processed_image.resize((int(self.resize_x*self.canvas_scalefactor),int(self.resize_y*self.canvas_scalefactor)),resample=0))
         self.TKitem=self.canvas.create_image(self.display_scaled_position,image=self.TKImage,anchor='center',tag=self.tag, state='normal')
-
 
     def update(self):
         self.processed_image = self.process(mode='display')
@@ -115,7 +119,15 @@ class SourceImage():
         dict = {}
         dict['file_name'] = self.file_name
         dict['zoom_factor'] = self.zoom_factor
+        dict['center_x'] = self.center_x
+        dict['center_y'] = self.center_y
         return dict
+        
+    def setdict(self, dict):
+        self.file_name = dict['file_name']
+        self.zoom_factor = dict['zoom_factor']
+        self.center_x = dict['center_x']
+        self.center_y = dict['center_y']
     
     def save_original(self, fp=None):
         self.savepath = fp
@@ -158,8 +170,17 @@ class Mask():
         dict['mode'] = self.mode
         dict['file_name'] = self.file_name
         dict['zoom_factor'] = self.zoom_factor
+        dict['center_x'] = self.center_x
+        dict['center_y'] = self.center_y
         return dict
     
+    def setdict(self, dict):
+        self.mode = dict['mode']
+        self.file_name = dict['file_name']
+        self.zoom_factor = dict['zoom_factor']
+        self.center_x = dict['center_x']
+        self.center_y = dict['center_y']
+        
     def save_original(self, fp=None):
         self.savepath = fp
         self.file_name = self.savepath + '/' + 'mask_' + str(id(self.original)) + '.png'

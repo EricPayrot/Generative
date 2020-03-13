@@ -1,0 +1,207 @@
+{
+    "app": {
+        "layers": [
+            "layer2582287866848"
+        ]
+    },
+    "layer2582287866848": {
+        "clip2582276213344": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                540.0,
+                126.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582285928336": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                540.0,
+                378.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582285928480": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                414.0,
+                378.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582285928672": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                666.0,
+                126.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582285928720": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                540.0,
+                252.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582288110352": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                414.0,
+                126.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582288111312": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                414.0,
+                252.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582288143840": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                666.0,
+                378.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clip2582288144512": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "mask": "mask2582288015856",
+            "position": [
+                666.0,
+                252.0
+            ],
+            "resize_x": 84,
+            "resize_y": 84,
+            "rotation": 0,
+            "source": "source2582288143504",
+            "tag": "layer2582287866848"
+        },
+        "clips": [
+            "clip2582288110352",
+            "clip2582288111312",
+            "clip2582285928480",
+            "clip2582276213344",
+            "clip2582285928720",
+            "clip2582285928336",
+            "clip2582285928672",
+            "clip2582288144512",
+            "clip2582288143840"
+        ],
+        "geometry": {
+            "centerx": 540,
+            "centery": 252,
+            "height": 504,
+            "nb_col": 3,
+            "nb_lin": 3,
+            "width": 504
+        },
+        "geometry_strategy": "grid",
+        "hsv": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0
+        },
+        "image_source_strategy": "scratchpad",
+        "layerID": "layer2582287866848",
+        "layerIndex": 1,
+        "layer_visible": true,
+        "mask2582288015856": {
+            "file_name": "state/gen13_03_2020_142404/mask/mask_2582288016816.png",
+            "mode": "draw",
+            "original": 2582288016816,
+            "zoom_factor": 100
+        },
+        "mask_invert": {
+            "mask_invert": false
+        },
+        "masks": [
+            "mask2582288015856"
+        ],
+        "resize": {
+            "resize": 84
+        },
+        "rotate": {
+            "rotation": 0
+        },
+        "source2582288143504": {
+            "file_name": "state/gen13_03_2020_142404/source/source_2582287968336.png",
+            "zoom_factor": 100
+        },
+        "source_images": [
+            "source2582288143504"
+        ]
+    }
+}

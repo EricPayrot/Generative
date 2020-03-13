@@ -1,7 +1,7 @@
 from tkinter import*
 from PIL import Image, ImageDraw
 import os, random, glob
-from Observer import Observer, Event
+#from Observer import Observer, Event
 from imageClip import ImageClip
 from UserInterface import*
 from Generator import*

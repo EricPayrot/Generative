@@ -1,12 +1,12 @@
 from tkinter import*
 from PIL import Image, ImageDraw
 import os, random, glob
-from Observer import Observer, Event
+from Observer import observer, Event
 from imageClip import ImageClip
 from UserInterface import*
 from datetime import datetime
 
-class generator(Observer.Observer):
+class generator(observer):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
@@ -19,7 +19,6 @@ class generator(Observer.Observer):
         self.param_type=[]
         self.param_default=[]
         self.widgets = []
-        #self.observe('param_change',self.param_has_changed)
         self.create_param_widgets(nb_col=1)
 
     def getdict(self):
@@ -51,6 +50,12 @@ class generator(Observer.Observer):
             if col >= nb_col:
                 col=0
                 row+=1
+
+    def update_param_widgets(self):
+        for w in self.widgets:
+            param = w.param
+            w.value.set(getattr(self, param))
+
 
     def delete_param_widgets(self):
         for widget in self.widgets:
@@ -164,7 +169,7 @@ class geometry(generator):
         for c in range(0,len(self.coordinates)):
             clip_source_image = Image.new("RGBA",(200,200),(127,127,127,20))
             clip_mask =  Image.new("L",(200,200),255)
-            self.parent.clips.append(ImageClip(source=clip_source_image,canvas=self.canvas,generator=self, mask=clip_mask))          
+            self.parent.clips.append(ImageClip(source=clip_source_image,canvas=self.canvas,generator=self, mask=None))          
 
             self.parent.clips[c].position[0] = self.coordinates[c][0]
             self.parent.clips[c].position[1] = self.coordinates[c][1]
@@ -325,9 +330,9 @@ class clip_mask(modulator):
             if len(self.mask)>0:
                 clip_mask = self.mask[random.randint(0,len(self.mask)-1)].image               
                 self.parent.clips[c].mask=clip_mask
-            else :
-                clip_mask = Image.new("L",(200,200),255) #utile ?               
-                self.parent.clips[c].mask=clip_mask
+            # else :
+            #     clip_mask = Image.new("L",(200,200),255) #utile ?               
+            #     self.parent.clips[c].mask=clip_mask
         print('*****************update masks', self)
     
     def randomize(self, generator, param):

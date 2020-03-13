@@ -1,8 +1,8 @@
 from tkinter import*
 from tkinter import filedialog
 from PIL import Image, ImageDraw, ImageTk
-from Observer import*
-import os, Observer
+from Observer import Event
+import os
 from imageClip import SourceImage, Mask
 
 class appUI():
@@ -67,7 +67,6 @@ class layerUI():
     def __init__(self, parent, parentUI):
         self.parentUI = parentUI
         self.control_panel = Frame(self.parentUI, height=500, width=250)
-        #self.control_panel.grid_propagate(0)
         self.control_panel.grid(row=0,column=0)
         self.control_panel.grid_columnconfigure(0, weight=1)
         self.layer_widget = layer_widget(parent.parent.layer_panel,parent)
@@ -165,7 +164,7 @@ class param_widget():
         self.value.set(value)
         self.entry = Entry(self.widget, textvariable=self.value, width=4)
         self.old_coords = None
-        
+
         # layout widgets
         self.widget.grid()            
         #self.widget.columnconfigure(0,minsize=120)

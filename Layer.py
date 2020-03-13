@@ -1,7 +1,7 @@
 from tkinter import*
 from PIL import Image, ImageDraw
 import os, random, glob
-from Observer import Observer, Event
+from Observer import observer, Event
 from imageClip import ImageClip
 from UserInterface import*
 from datetime import datetime
@@ -12,7 +12,7 @@ import dill
 import json
 from tkinter import filedialog
 
-class App(Observer.Observer):
+class App(observer):
     def __init__(self):
         super().__init__()
         self.canvas_height = 500
@@ -64,11 +64,22 @@ class App(Observer.Observer):
             if layer == self.selected_layer:
                 layer.layerUI.control_panel.lift()
                 layer.layerUI.layer_widget.selected()
-            else:
+            elif len(self.layers) >1:
                 layer.layerUI.layer_widget.unselected()
     
-    def remove_layer(self):
-        print('remove layer')
+    def remove_layer(self, layer):
+        sources = layer.image_source.get_source_image()
+        sources = []
+        layer.masksource.mask = []
+        layer.clips = []
+        liste = layer.layerUI.control_panel.grid_slaves()
+        for l in liste:
+            l.destroy()
+        layer.layerUI.layer_widget.widget.destroy()
+        self.canvas.delete(layer.layerID)
+        del layer
+
+        
 
     def raise_layer(self):
         print('raise layer')
@@ -144,9 +155,10 @@ class App(Observer.Observer):
                 source.save_original(self.source_folder_path)
                 dict[layerID]['source'+str(id(source.image))] = source.getdict()
             
-            for mask in layer.masksource.mask:
-                mask.save_original(self.mask_folder_path)
-                dict[layerID]['mask'+str(id(mask.image))] = mask.getdict()
+            if len(layer.masksource.mask) >0:
+                for mask in layer.masksource.mask:
+                    mask.save_original(self.mask_folder_path)
+                    dict[layerID]['mask'+str(id(mask.image))] = mask.getdict()
             
             for clip in layer.clips:
                 dict[layerID]['clip'+str(id(clip))] = clip.getdict()
@@ -160,8 +172,11 @@ class App(Observer.Observer):
         filename = filedialog.askopenfilename()
         with open(filename, 'rb') as f:
             dict = json.load(f)
-            print(dict)
-        # delete existing layers, sources, masks and clips
+
+        # delete existing layers, sources, masks, clips and UI
+        for layer in self.layers:
+            self.remove_layer(layer)
+        self.layers = []
 
         # instanciate objects layer by layer
         layer_import_dict = {}
@@ -177,30 +192,36 @@ class App(Observer.Observer):
             for source in dict[layer]['source_images']:
                 original = Image.open(dict[layer][source]['file_name'])
                 new_source = SourceImage(original= original)
+                new_source.setdict(dict[layer][source])
+                new_source.crop_original_image()
                 layer_import_dict[layer].image_source.get_source_image().append(new_source)
                 source_import_dict[source] = new_source
         
             for mask in dict[layer]['masks']:
                 original = Image.open(dict[layer][mask]['file_name'])
-                new_mask = Mask(original= original)
+                mode = dict[layer][mask]['mode']
+                new_mask = Mask(original= original, mode=mode)
+                new_mask.setdict(dict[layer][mask])
+                new_mask.crop_original_image()
                 layer_import_dict[layer].masksource.mask.append(new_mask)
                 mask_import_dict[mask] = new_mask
 
             for clip in dict[layer]['clips']:
                 source = source_import_dict[dict[layer][clip]['source']].image
-                mask = mask_import_dict[dict[layer][clip]['mask']].image
+                try:
+                    mask = mask_import_dict[dict[layer][clip]['mask']].image
+                except KeyError:
+                    mask = None
                 generator = layer_import_dict[layer].geometry.instance
                 new_clip = ImageClip(source, self.canvas, generator, mask)
                 new_clip.setdict(dict[layer][clip])
                 layer_import_dict[layer].clips.append(new_clip)
                 clip_import_dict[clip] = new_clip
 
-            layer_import_dict[layer].refresh_canvas()
+            layer_import_dict[layer].update(layer_import_dict[layer])
+            
 
-        print(source_import_dict)
-
-
-class Layer(Observer.Observer):
+class Layer(observer):
     def __init__(self,parent):
         super().__init__()
         self.parent = parent
@@ -248,6 +269,7 @@ class Layer(Observer.Observer):
         
         self.update(self)
         self.parent.appUI.apply_zoom_factor()
+        self.refresh_position()
 
     def getdict(self):
         dict = {}
@@ -268,16 +290,25 @@ class Layer(Observer.Observer):
 
     def setdict(self, dict):
         self.geometry_strategy = dict['geometry_strategy']
+        self.select_geometryUI.option.set(self.geometry_strategy)
+        self.change_geometry_strategy(self)
         self.layer_visible = dict['layer_visible']
         self.layerIndex = dict['layerIndex']
         self.image_source_strategy = dict['image_source_strategy']
+        self.layerUI.sel_img_srcUI.option.set(self.image_source_strategy)
+        self.change_image_source_strategy(self.layerUI.sel_img_srcUI)
         self.layer_visible = dict['layer_visible']
         self.layerIndex = dict['layerIndex']
         self.geometry.instance.setdict(dict['geometry'])
+        self.geometry.instance.update_param_widgets()
         self.resize.setdict(dict['resize'])
+        self.resize.update_param_widgets()
         self.rotate.setdict(dict['rotate'])
+        self.rotate.update_param_widgets()
         self.hsv.setdict(dict['hsv'])
+        self.hsv.update_param_widgets()
         self.mask_invert.setdict(dict['mask_invert'])
+        self.mask_invert.update_param_widgets()
 
     def toggle_layer_visibility(self, generator):
         if generator == self:

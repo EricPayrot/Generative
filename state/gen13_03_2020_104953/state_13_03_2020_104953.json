@@ -1,0 +1,374 @@
+{
+    "app": {
+        "layers": [
+            "layer1769502526480",
+            "layer1769502805920"
+        ]
+    },
+    "layer1769502526480": {
+        "clip1769462565472": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                252.0,
+                126.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769500588016": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                252.0,
+                378.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769500588160": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                126.0,
+                378.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769500588352": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                378.0,
+                126.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769500588400": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                252.0,
+                252.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769502769984": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                126.0,
+                126.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769502770944": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                126.0,
+                252.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769502803472": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                378.0,
+                378.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clip1769502804144": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                378.0,
+                252.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502803136",
+            "tag": "layer1769502526480"
+        },
+        "clips": [
+            "clip1769502769984",
+            "clip1769502770944",
+            "clip1769500588160",
+            "clip1769462565472",
+            "clip1769500588400",
+            "clip1769500588016",
+            "clip1769500588352",
+            "clip1769502804144",
+            "clip1769502803472"
+        ],
+        "geometry": {
+            "centerx": 252,
+            "centery": 252,
+            "height": 504,
+            "nb_col": 3,
+            "nb_lin": 3,
+            "width": 504
+        },
+        "geometry_strategy": "grid",
+        "hsv": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0
+        },
+        "image_source_strategy": "scratchpad",
+        "layerID": "layer1769502526480",
+        "layerIndex": 1,
+        "layer_visible": true,
+        "mask_invert": {
+            "mask_invert": false
+        },
+        "masks": [],
+        "resize": {
+            "resize": 30
+        },
+        "rotate": {
+            "rotation": 0
+        },
+        "source1769502803136": {
+            "file_name": "state/gen13_03_2020_104953/source/source_1769502632064.png",
+            "zoom_factor": 100
+        },
+        "source_images": [
+            "source1769502803136"
+        ]
+    },
+    "layer1769502805920": {
+        "clip1767388578960": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                549.0,
+                126.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1767388580400": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                675.0,
+                378.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1767388581072": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                675.0,
+                252.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1767388581360": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                801.0,
+                126.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1767388615008": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                801.0,
+                252.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1767388615200": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                801.0,
+                378.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1769502524272": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                549.0,
+                378.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1769502771088": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                675.0,
+                126.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clip1769502827904": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0,
+            "invert_mask": false,
+            "position": [
+                549.0,
+                252.0
+            ],
+            "resize_x": 30,
+            "resize_y": 30,
+            "rotation": 0,
+            "source": "source1769502805872",
+            "tag": "layer1769502805920"
+        },
+        "clips": [
+            "clip1767388578960",
+            "clip1769502827904",
+            "clip1769502524272",
+            "clip1769502771088",
+            "clip1767388581072",
+            "clip1767388580400",
+            "clip1767388581360",
+            "clip1767388615008",
+            "clip1767388615200"
+        ],
+        "geometry": {
+            "centerx": 675,
+            "centery": 252,
+            "height": 504,
+            "nb_col": 3,
+            "nb_lin": 3,
+            "width": 504
+        },
+        "geometry_strategy": "grid",
+        "hsv": {
+            "H_offset": 0,
+            "S_offset": 0,
+            "V_offset": 0
+        },
+        "image_source_strategy": "scratchpad",
+        "layerID": "layer1769502805920",
+        "layerIndex": 2,
+        "layer_visible": true,
+        "mask_invert": {
+            "mask_invert": false
+        },
+        "masks": [],
+        "resize": {
+            "resize": 30
+        },
+        "rotate": {
+            "rotation": 0
+        },
+        "source1769502805872": {
+            "file_name": "state/gen13_03_2020_104953/source/source_1769502829152.png",
+            "zoom_factor": 100
+        },
+        "source_images": [
+            "source1769502805872"
+        ]
+    }
+}

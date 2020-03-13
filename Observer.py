@@ -1,4 +1,4 @@
-class Observer():
+class observer():
     _observers = []
     def __init__(self):
         self._observers.append(self)
@@ -16,11 +16,11 @@ class Event():
         if autofire:
             self.fire()
     def fire(self):
-        for observer in Observer._observers:
-            if self.callbackname in observer._observables:
+        for obs in observer._observers:
+            if self.callbackname in obs._observables:
                 if self.param:
-                    observer._observables[self.callbackname](self.generator, self.param)
+                    obs._observables[self.callbackname](self.generator, self.param)
                 elif self.generator:
-                    observer._observables[self.callbackname](self.generator)
+                    obs._observables[self.callbackname](self.generator)
                 else :
-                    observer._observables[self.callbackname]()
+                    obs._observables[self.callbackname]()

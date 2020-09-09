@@ -129,7 +129,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-output image/
-pics/
+
+
 test tkzinc.py
 test tkzinc.txt
